@@ -12,6 +12,7 @@ const leaderboardData = [
   { name: 'Hristijan', wins: 1, losses: 1 },
   { name: 'Bob', wins: 6, losses: 2 },
   { name: 'Jimmy', wins: 5, losses: 4 },
+    { name: 'Sally', wins: 3, losses: 6 },
 ];
 
 export const Home = () => {
@@ -20,13 +21,23 @@ export const Home = () => {
         <><Card>
             <CardContent>
                 <Typography variant="h3" component="div">
-                    Play
+                    Play a game of  <b>Trouble</b>
                 </Typography>
-                <Typography variant="h5" component="div">
-                    Play a game of TCA Trouble
-                </Typography>
-                <CardActions style={{ justifyContent: 'center' }}>
-                    <Button variant="contained" size="large" onClick={() => nav("/setup")}>Play</Button>
+                <CardActions style={{ justifyContent: 'center', width: '100%', }}>
+                <Button 
+  variant="contained" 
+  size="large" 
+  onClick={() => nav("/setup")} 
+  style={{
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center'
+  }}
+>
+  Play
+</Button>
                 </CardActions>
             </CardContent>
         </Card><div>
