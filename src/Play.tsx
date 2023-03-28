@@ -3,15 +3,15 @@ import { useNavigate } from 'react-router-dom';
 import { GameResult } from './front-end-model';
 
 interface PlayProps {
-    addGameResultFunc: (r: GameResult) => void;
+    addGameResultFunction: (r: GameResult) => void;
 };
 
-export const Play: React.FC<PlayProps> = ({addGameResultFunc}) => {
+export const Play: React.FC<PlayProps> = ({addGameResultFunction}) => {
 
     const nav = useNavigate ();
 
     const endGame = () => {
-        addGameResultFunc({winner: "Bridgette", players: ["Dan", "Kaityn", "Bridgette"]})
+        addGameResultFunction({winner: "Bridgette", players: ["Dan", "Kaityn", "Bridgette"]})
     };
 
     nav (-2);

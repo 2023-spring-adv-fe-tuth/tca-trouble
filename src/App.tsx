@@ -42,7 +42,7 @@ const App = () => {
                     <Route path="/setup" element={<Setup />} />
                     <Route 
                       path="/play" 
-                      element={<Play addGameResultFunc={addGameResult} />} 
+                      element={<Play addGameResultFunction={addGameResult} />} 
                     />
                 </Routes>
               </HashRouter>
