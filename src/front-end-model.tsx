@@ -10,6 +10,12 @@ export interface LeaderboardPlayer {
     avg: string;
 };
 
+export interface SetupInfo {
+    start: string;
+    chosenPlayers: string[];
+};
+
+
 export type GetPreviousPlayersFunc = (results: GameResult[]) => string[];
 export type CalculateLeaderboardFunc = (results: GameResult[]) => LeaderboardPlayer[];
 export type AddGameResultFunc = (results: GameResult[], result: GameResult) => GameResult[];

@@ -9,7 +9,7 @@ import {HashRouter, Routes, Route} from 'react-router-dom';
 
 import Box from '@mui/material/Box';
 
-import { GameResult, calculateLeaderboard } from './front-end-model';
+import { GameResult, calculateLeaderboard, SetupInfo, getPreviousPlayers } from './front-end-model';
 
 const hardcodedGameResults: GameResult[] = [
         {winner: "Hristijan", players: ["Natalija", "Eric"]},
@@ -21,10 +21,10 @@ const hardcodedGameResults: GameResult[] = [
 const App = () => {
 
   const [results, setGameResults] = useState(hardcodedGameResults);
-
-  const addGameResult = (r: GameResult) => {
-    setGameResults([...results, r]);
-  };
+  
+  const [setupInfo, setSetupInfo] = useState <SetupInfo>({start: "", chosenPlayers: []});
+  
+  const addGameResult = (r: GameResult) => {setGameResults([...results, r]);};
   
   return (
     <div>
@@ -37,12 +37,26 @@ const App = () => {
                 <Routes>
                     <Route 
                       path="/" 
-                      element={<Home leaderboardData={calculateLeaderboard(results)} />} 
+                      element={<Home 
+                          leaderboardData={calculateLeaderboard(results)} 
+                          
+                        />} 
                     />
-                    <Route path="/setup" element={<Setup />} />
+                    
+                    <Route 
+                      path="/setup" 
+                      element={<Setup 
+                          previousPlayers={getPreviousPlayers(results)}
+                          setSetupInfo={setSetupInfo}
+                        />} 
+                    />
                     <Route 
                       path="/play" 
-                      element={<Play addGameResultFunction={addGameResult} />} 
+                      element={<Play 
+                          addGameResultFunction={addGameResult}
+                          setupInfo={setupInfo} 
+                          
+                        />} 
                     />
                 </Routes>
               </HashRouter>
