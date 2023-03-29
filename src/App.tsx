@@ -46,6 +46,7 @@ const App = () => {
                     <Route 
                       path="/setup" 
                       element={<Setup 
+                        
                           previousPlayers={getPreviousPlayers(results)}
                           setSetupInfo={setSetupInfo}
                         />} 

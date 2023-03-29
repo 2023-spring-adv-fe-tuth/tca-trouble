@@ -20,6 +20,7 @@ export interface SetupProps {
     previousPlayers: string[];
     setSetupInfo: (si: SetupInfo) => void;
 }
+
 export const Setup: React.FC <SetupProps> = ({ previousPlayers, setSetupInfo}) => {
 
     const nav = useNavigate ();
@@ -45,7 +46,10 @@ export const Setup: React.FC <SetupProps> = ({ previousPlayers, setSetupInfo}) =
     };
 
     const validateAddNewPlayer = () => {
-        if (addPlayer.length == 0 || chosenPlayers.some(x => x.name.localeCompare(addPlayer))) {
+        if (
+            addPlayer.length == 0
+            || chosenPlayers.some(x => x.name.localeCompare(addPlayer) == 0)
+        ) {
             return;
         }
         setChosenPlayers([
@@ -58,6 +62,7 @@ export const Setup: React.FC <SetupProps> = ({ previousPlayers, setSetupInfo}) =
         );
         setAddPlayer("");
     };
+
 
     return(
         <>
