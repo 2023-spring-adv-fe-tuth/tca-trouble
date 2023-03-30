@@ -6,10 +6,6 @@ import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
 import Box from "@mui/material/Box";
-import Input from "@mui/material/Input";
-import InputLabel from "@mui/material/InputLabel";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import Alert from "@mui/material/Alert";
@@ -47,11 +43,13 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const validateAddNewPlayer = () => {
     if (
-      addPlayer.length == 0 ||
-      chosenPlayers.some((x) => x.name.localeCompare(addPlayer) == 0)
-    ) {
+      addPlayer.length == 0 || chosenPlayers.some((x) => x.name.localeCompare(addPlayer) == 0)
+    ) 
+    
+    {
       return;
     }
+
     setChosenPlayers([
       ...chosenPlayers,
       {
@@ -64,10 +62,14 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const numSelected = chosenPlayers.filter((x) => x.checked).length;
   const maxPlayers = 4;
+  const isStartButtonDisabled = numSelected === 0 || numSelected > maxPlayers;
 
   return (
     <>
       <h2>Setup</h2>
+      <Alert severity="info">
+                <AlertTitle><strong> Trouble </strong> can be played with maximum 4 players.</AlertTitle>
+        </Alert>
 
       <Box sx={{ display: "flex", alignItems: "flex-end" }}>
         <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
@@ -99,13 +101,11 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
         </FormGroup>
       ))}
 
-            <Alert severity="error">
-                <AlertTitle><b> Trouble </b> can be played with maximum 4 players.</AlertTitle>
-               
-            </Alert>
+
       
             <Button variant="contained" size="large"
-                onClick={startGame}>Start Game
+                onClick={startGame} disabled={isStartButtonDisabled} 
+              >Start Game
             </Button>
         </>
     );

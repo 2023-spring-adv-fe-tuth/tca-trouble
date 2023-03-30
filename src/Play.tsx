@@ -5,7 +5,7 @@ import { GameResult, SetupInfo } from './front-end-model';
 interface PlayProps {
     addGameResultFunction: (r: GameResult) => void;
     setupInfo: SetupInfo;
-};
+}; 
 
 export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo}) => {
 
@@ -22,7 +22,6 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo}) =>
     return(
         <>
             <h2>Play</h2>
-           
             {
                 setupInfo.chosenPlayers.map(x =>(
                     <Button variant="contained" size="large" onClick={() => endGame(x)}>{x} Won </Button>
