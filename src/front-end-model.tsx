@@ -1,6 +1,10 @@
 export interface GameResult {
     winner: string;
     players: string[];
+
+    start: string;
+    end: string;
+
 };
 
 export interface LeaderboardPlayer {
@@ -13,7 +17,6 @@ export interface LeaderboardPlayer {
 export interface SetupInfo {
     start: string;
     chosenPlayers: string[];
-    
 };
 
 
@@ -51,3 +54,12 @@ export const calculateLeaderboard: CalculateLeaderboardFunc = (results) => {
         .map(x => ({...x, avg: x.avg.toFixed(3)}))
     ;
 };
+
+export const getShortestGameDuration = (results: GameResult[]) => Math.min (
+    ...results.map(x => new Date(x.end).getTime() - new Date(x.start).getTime())
+)
+
+export const getLongestGameDuration = (results: GameResult[]) => Math.max (
+    ...results.map(x => new Date(x.end).getTime() - new Date(x.start).getTime())
+)
+

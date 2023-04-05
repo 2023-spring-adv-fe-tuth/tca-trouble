@@ -1,7 +1,8 @@
-import Button from "@mui/material/Button/Button";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SetupInfo } from "./front-end-model";
+
+import Button from "@mui/material/Button/Button";
 import FormGroup from "@mui/material/FormGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Checkbox from "@mui/material/Checkbox";
@@ -50,8 +51,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
       return;
     }
 
-    setChosenPlayers([
-      ...chosenPlayers,
+    setChosenPlayers([...chosenPlayers,
       {
         name: addPlayer,
         checked: true,
@@ -62,7 +62,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const numSelected = chosenPlayers.filter((x) => x.checked).length;
   const maxPlayers = 4;
-  const isStartButtonDisabled = numSelected === 0 || numSelected > maxPlayers;
+  const disableStartButton = numSelected === 0 || numSelected > maxPlayers;
 
   return (
     <>
@@ -86,26 +86,33 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
         </Button>
       </Box>
 
-      {chosenPlayers.map((x) => (
-        <FormGroup key={x.name}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={x.checked}
-                onChange={() => togglePlayer(x.name)}
-                disabled={numSelected === maxPlayers && !x.checked}
-              />
-            }
-            label={x.name}
-          />
-        </FormGroup>
+      {
+        chosenPlayers.map((x) => (
+          <FormGroup key={x.name}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={x.checked}
+                  onChange={() => togglePlayer(x.name)}
+                  disabled={numSelected === maxPlayers && !x.checked}
+                  color="success"
+                />
+              }
+              label={x.name}
+            />
+            
+          </FormGroup>
       ))}
-
-
-      
             <Button variant="contained" size="large"
-                onClick={startGame} disabled={isStartButtonDisabled} 
-              >Start Game
+                onClick={startGame} disabled={disableStartButton}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  display: 'flex',
+                  justifyContent: 'center',
+                  alignItems: 'center'
+                  }}
+              > Start Game
             </Button>
         </>
     );
