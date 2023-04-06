@@ -22,6 +22,8 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import FileCopyIcon from '@mui/icons-material/FileCopy';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import FormControl from "@mui/material/FormControl/FormControl";
+import { InputLabel, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -83,7 +85,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
   };
 
   const [chosenPlayers, setChosenPlayers] = useState(
-    previousPlayers.map((x) => ({ name: x, checked: false }))
+    previousPlayers.map((x) => ({ name: x, checked: false, color: ""}))
   );
 
   const [addPlayer, setAddPlayer] = useState("");
@@ -104,6 +106,27 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
     nav("/play");
   };
 
+  const handleColorChange = (event: SelectChangeEvent<string>, name: string) => {
+    const selectedColor = event.target.value;
+  
+    // Find the player in the chosenPlayers array by their name
+    const updatedPlayers = chosenPlayers.map((player) => {
+      if (player.name === name) {
+        // Update the player's color
+        return {
+          ...player,
+          color: selectedColor,
+        };
+      }
+      // If this isn't the player we're looking for, just return them unchanged
+      return player;
+    });
+  
+    // Update the state with the new player data
+    setChosenPlayers(updatedPlayers);
+  };
+  
+
   const validateAddNewPlayer = () => {
     if (
       addPlayer.length == 0 || chosenPlayers.some((x) => x.name.localeCompare(addPlayer) == 0)
@@ -117,6 +140,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
       {
         name: addPlayer,
         checked: true,
+        color: "",
       },
     ]);
     setAddPlayer("");
@@ -165,46 +189,26 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
               label={x.name}
             />
             {x.checked && (
-            <Button
-        id="demo-customized-button"
-        aria-controls={open ? 'demo-customized-menu' : undefined}
-        aria-haspopup="true"
-        aria-expanded={open ? 'true' : undefined}
-        variant="contained"
-        disableElevation
-        onClick={handleClick}
-        endIcon={<KeyboardArrowDownIcon />}
-      >
-        Select Your Color
-      </Button>
-       )}
-      <StyledMenu
-        id="demo-customized-menu"
-        MenuListProps={{
-          'aria-labelledby': 'demo-customized-button',
-        }}
-        anchorEl={anchorEl}
-        open={open}
-        onClose={handleClose}
-      >
-        <MenuItem onClick={handleClose} disableRipple>
-          <EditIcon />
-          Blue
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          <FileCopyIcon />
-          Red
-        </MenuItem>
-        <Divider/>
-        <MenuItem onClick={handleClose} disableRipple>
-          <ArchiveIcon />
-          Yellow
-        </MenuItem>
-        <MenuItem onClick={handleClose} disableRipple>
-          <MoreHorizIcon />
-          Green
-        </MenuItem>
-      </StyledMenu>
+          <FormControl sx={{ ml: 2 }}>
+            <InputLabel id={`${x.name}-color-label`}>Color</InputLabel>
+            <Select
+              labelId={`${x.name}-color-label`}
+              value={x.color}
+              onChange={(event) => handleColorChange(event, x.name)}
+            >
+              <MenuItem value="red">Red</MenuItem>
+              <MenuItem value="blue">Blue</MenuItem>
+              <MenuItem value="green">Green</MenuItem>
+            </Select>
+          </FormControl>
+        )}
+
+      {x.checked && x.color && (
+        <Typography variant="body2" sx={{ ml: 2 }}>
+          {x.name} - {x.color}
+        </Typography>
+      )}
+            
       </Box>
           </FormGroup>
           
