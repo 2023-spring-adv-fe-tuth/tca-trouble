@@ -213,6 +213,18 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
           </FormGroup>
           
       ))}
+        <div>
+    <Typography variant="h5">Selected players:</Typography>
+    <ul>
+      {chosenPlayers
+        .filter((x) => x.checked && x.color)
+        .map((x) => (
+          <li key={x.name}  style={{ color: x.color}}>
+            {x.name} - {x.color}
+          </li>
+        ))}
+    </ul>
+  </div>
             <Button variant="contained" size="large"
                 onClick={startGame} disabled={disableStartButton}
                 style={{
