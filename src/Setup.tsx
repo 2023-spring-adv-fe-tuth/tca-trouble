@@ -23,7 +23,7 @@ import FileCopyIcon from '@mui/icons-material/FileCopy';
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import FormControl from "@mui/material/FormControl/FormControl";
-import { InputLabel, Select, SelectChangeEvent, Typography } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material";
 
 const StyledMenu = styled((props: MenuProps) => (
   <Menu
@@ -76,12 +76,32 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
   const nav = useNavigate();
 
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const open = Boolean(anchorEl);
+  const [open, setOpen] = React.useState(false);
   const handleClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
+
+    const [selectedColors, setSelectedColors] = useState({});
   };
+  /*
   const handleClose = () => {
     setAnchorEl(null);
+  };
+*/
+
+/*
+  const handleChange = (event: SelectChangeEvent<typeof age>) => {
+    setAge(Number(event.target.value) || '');
+  };
+*/
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
+    if (reason !== 'backdropClick') {
+      setOpen(false);
+    }
+    setChosenPlayers(chosenPlayers);
   };
 
   const [chosenPlayers, setChosenPlayers] = useState(
@@ -108,15 +128,20 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const handleColorChange = (event: SelectChangeEvent<string>, name: string) => {
     const selectedColor = event.target.value;
-  
+    const [selectedColors, setSelectedColors] = useState([]);
     // Find the player in the chosenPlayers array by their name
     const updatedPlayers = chosenPlayers.map((player) => {
+      
       if (player.name === name) {
         // Update the player's color
         return {
           ...player,
           color: selectedColor,
         };
+
+      
+
+
       }
       // If this isn't the player we're looking for, just return them unchanged
       return player;
@@ -167,7 +192,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
           onChange={(e) => setAddPlayer(e.target.value)}
         />
 
-        <Button variant="contained" size="large" onClick={validateAddNewPlayer}>
+        <Button variant="contained" onClick={validateAddNewPlayer} sx={{ml: 1}}>
           Add Player
         </Button>
       </Box>
@@ -188,26 +213,38 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
               }
               label={x.name}
             />
-            {x.checked && (
-          <FormControl sx={{ ml: 2 }}>
-            <InputLabel id={`${x.name}-color-label`}>Color</InputLabel>
-            <Select
-              labelId={`${x.name}-color-label`}
-              value={x.color}
-              onChange={(event) => handleColorChange(event, x.name)}
-            >
-              <MenuItem value="red">Red</MenuItem>
-              <MenuItem value="blue">Blue</MenuItem>
-              <MenuItem value="green">Green</MenuItem>
-            </Select>
-          </FormControl>
+            {x.checked && ( 
+
+          <><Button onClick={handleClickOpen}>Select your color</Button><Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
+                  <DialogTitle> <b> Select your color </b></DialogTitle>
+                  <DialogContent>
+                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
+                    
+                      <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-dialog-select-label"> Color </InputLabel>
+                        <Select
+                          labelId={`${x.name}-color-label`}
+                          id="demo-dialog-select"
+                          value={x.color}
+                          onChange={(event) => handleColorChange(event, x.name)}
+                          input={<OutlinedInput label="Select Your Color" />}
+                        >
+                          <MenuItem value="red">Red</MenuItem>
+                          <MenuItem value="blue">Blue</MenuItem>
+                          <MenuItem value="green">Green</MenuItem>
+                          <MenuItem value="yellow">Yellow</MenuItem>
+                        </Select>
+                      </FormControl>
+                    </Box>
+                  </DialogContent>
+                  <DialogActions>
+                    <Button onClick={handleClose}>Cancel</Button>
+                    <Button onClick={handleClose}>Ok</Button>
+                  </DialogActions>
+                </Dialog></>
         )}
 
-      {x.checked && x.color && (
-        <Typography variant="body2" sx={{ ml: 2 }}>
-          {x.name} - {x.color}
-        </Typography>
-      )}
+      
             
       </Box>
           </FormGroup>
