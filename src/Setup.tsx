@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { SetupInfo } from "./front-end-model";
 
@@ -13,58 +13,14 @@ import Alert from "@mui/material/Alert";
 import AlertTitle from "@mui/material/AlertTitle";
 
 import * as React from 'react';
-import { styled, alpha } from '@mui/material/styles';
-import Menu, { MenuProps } from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
-import EditIcon from '@mui/icons-material/Edit';
-import Divider from '@mui/material/Divider';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import FileCopyIcon from '@mui/icons-material/FileCopy';
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
-import FormControl from "@mui/material/FormControl/FormControl";
-import { Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, OutlinedInput, Select, SelectChangeEvent, Typography } from "@mui/material";
 
-const StyledMenu = styled((props: MenuProps) => (
-  <Menu
-    elevation={0}
-    anchorOrigin={{
-      vertical: 'bottom',
-      horizontal: 'right',
-    }}
-    transformOrigin={{
-      vertical: 'top',
-      horizontal: 'right',
-    }}
-    {...props}
-  />
-))(({ theme }) => ({
-  '& .MuiPaper-root': {
-    borderRadius: 6,
-    marginTop: theme.spacing(1),
-    minWidth: 180,
-    color:
-      theme.palette.mode === 'light' ? 'rgb(55, 65, 81)' : theme.palette.grey[300],
-    boxShadow:
-      'rgb(255, 255, 255) 0px 0px 0px 0px, rgba(0, 0, 0, 0.05) 0px 0px 0px 1px, rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.05) 0px 4px 6px -2px',
-    '& .MuiMenu-list': {
-      padding: '4px 0',
-    },
-    '& .MuiMenuItem-root': {
-      '& .MuiSvgIcon-root': {
-        fontSize: 18,
-        color: theme.palette.text.secondary,
-        marginRight: theme.spacing(1.5),
-      },
-      '&:active': {
-        backgroundColor: alpha(
-          theme.palette.primary.main,
-          theme.palette.action.selectedOpacity,
-        ),
-      },
-    },
-  },
-}));
+import MenuItem from '@mui/material/MenuItem';
+
+import FormControl from "@mui/material/FormControl/FormControl";
+import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, Menu, OutlinedInput, Select, SelectChangeEvent, ThemeProvider, Typography, createMuiTheme } from "@mui/material";
+
+import { createTheme } from '@mui/material/styles';
+
 
 
 export interface SetupProps {
@@ -74,49 +30,34 @@ export interface SetupProps {
 
 export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) => {
   const nav = useNavigate();
-
-  const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
-  const [open, setOpen] = React.useState(false);
-  const handleClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-
-    const [selectedColors, setSelectedColors] = useState({});
-  };
-  /*
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-*/
-
-/*
-  const handleChange = (event: SelectChangeEvent<typeof age>) => {
-    setAge(Number(event.target.value) || '');
-  };
-*/
-  const handleClickOpen = () => {
-    setOpen(true);
-  };
-
-  const handleClose = (event: React.SyntheticEvent<unknown>, reason?: string) => {
-    if (reason !== 'backdropClick') {
-      setOpen(false);
-    }
-    setChosenPlayers(chosenPlayers);
-  };
+  
 
   const [chosenPlayers, setChosenPlayers] = useState(
     previousPlayers.map((x) => ({ name: x, checked: false, color: ""}))
   );
 
   const [addPlayer, setAddPlayer] = useState("");
-
+  const [selectedPlayer, setSelectedPlayer] = useState("");
   const togglePlayer = (name: string) =>
-    setChosenPlayers(
-      chosenPlayers.map((x) => ({
-        ...x,
-        checked: x.name === name ? !x.checked : x.checked,
-      }))
-    );
+  setChosenPlayers(
+    chosenPlayers.map((x) => ({
+      ...x,
+      checked: x.name === name ? !x.checked : x.checked,
+      color: x.name === name && !x.checked ? "" : x.color,
+    }))
+  );
+
+  useEffect(() => {
+    // Add back color to available colors if player is unchecked
+    setAvailableColors((prev) => {
+      const uncheckedPlayer = chosenPlayers.find((p) => p.name === selectedPlayer && !p.checked);
+      if (uncheckedPlayer && uncheckedPlayer.color) {
+        return [...prev, uncheckedPlayer.color];
+      }
+      return prev;
+    });
+  }, [chosenPlayers, selectedPlayer]);
+
 
   const startGame = () => {
     setSetupInfo({
@@ -126,30 +67,32 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
     nav("/play");
   };
 
-  const handleColorChange = (event: SelectChangeEvent<string>, name: string) => {
-    const selectedColor = event.target.value;
-    const [selectedColors, setSelectedColors] = useState([]);
-    // Find the player in the chosenPlayers array by their name
-    const updatedPlayers = chosenPlayers.map((player) => {
-      
-      if (player.name === name) {
-        // Update the player's color
-        return {
-          ...player,
-          color: selectedColor,
-        };
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-      
-
-
-      }
-      // If this isn't the player we're looking for, just return them unchanged
-      return player;
-    });
   
-    // Update the state with the new player data
+  const [selectedColors, setSelectedColors] = useState<string[]>([]);
+  const handleColorChange = (color: string, playerName: string) => {
+    const updatedPlayers = chosenPlayers.map((player) => {
+      if (player.name === playerName) {
+        return { ...player, color: color };
+      } else {
+        return player;
+      }
+    });
     setChosenPlayers(updatedPlayers);
+    setSelectedPlayer("");
+    setAnchorEl(null);
+
+    // If the player is being unchecked, add their color back to the available colors
+    if (!color) {
+      const player = chosenPlayers.find((p) => p.name === playerName);
+      if (player && player.color) {
+        setAvailableColors([...availableColors, player.color]);
+      }
+    }
   };
+  
+
   
 
   const validateAddNewPlayer = () => {
@@ -173,17 +116,36 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const numSelected = chosenPlayers.filter((x) => x.checked).length;
   const maxPlayers = 4;
+  const disableAddButton = numSelected === maxPlayers; 
   const disableStartButton = numSelected === 0 || numSelected > maxPlayers;
+const [dialogOpen, setDialogOpen] = React.useState(false);
 
+const [availableColors, setAvailableColors] = useState(["red", "blue", "green", "yellow"]);
+
+const handleClose = () => {
+  setAvailableColors(["red", "blue", "green", "yellow"]);
+  setDialogOpen(false);
+};
+
+const handleColorClick = (color: string) => {
+  handleColorChange(color, selectedPlayer);
+  setAvailableColors(availableColors.filter((c) => c !== color));
+};
+
+
+  
   return (
     <>
-      <h2>Setup</h2>
+    
+    <Typography variant="h6" sx={{mb: 1}}>Setup</Typography>
+
+
       <Alert severity="info">
                 <AlertTitle><strong> Trouble </strong> can be played with maximum 4 players.</AlertTitle>
         </Alert>
 
-      <Box sx={{ display: "flex", alignItems: "flex-end" }}>
-        <AccountCircle sx={{ color: "action.active", mr: 1, my: 0.5 }} />
+      <Box sx={{ display: "flex", alignItems: "flex-end", mt: 1 }}>
+        <AccountCircle sx={{ color: "action.active", mr: 1 }} />
         <TextField
           id="input-with-sx"
           label="Enter your name"
@@ -192,7 +154,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
           onChange={(e) => setAddPlayer(e.target.value)}
         />
 
-        <Button variant="contained" onClick={validateAddNewPlayer} sx={{ml: 1}}>
+        <Button variant="contained" onClick={validateAddNewPlayer} size="small" sx={{ml: 1}} disabled={disableAddButton}>
           Add Player
         </Button>
       </Box>
@@ -201,78 +163,154 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
         chosenPlayers.map((x) => (
           
           <FormGroup key={x.name}>
-            <Box  sx={{ display: "flex", alignItems: "flex-end" }}>
+            <Box  sx={{ display: "flex", alignItems: "flex-end", mt: 0.5 }}>
             <FormControlLabel
               control={
                 <Checkbox
-                  checked={x.checked}
-                  onChange={() => togglePlayer(x.name)}
-                  disabled={numSelected === maxPlayers && !x.checked}
-                  color="success"
-                />
+                checked={x.checked}
+                onChange={(e) => {
+                  togglePlayer(x.name);
+                  setSelectedPlayer(x.name);
+                  if (e.target.checked) {
+                    setDialogOpen(true);
+                  }
+                }}
+                disabled={numSelected === maxPlayers && !x.checked}
+                color="success"
+              />
               }
               label={x.name}
             />
-            {x.checked && ( 
+           {x.checked && (
+           <FormControl sx={{ minWidth: 120 }} size="small">
+<Dialog open={dialogOpen && Boolean(selectedPlayer)} onClose={handleClose}>        
+<DialogTitle>Select color for {selectedPlayer}</DialogTitle>
+        <DialogContent sx={{ padding: "24px" }}>
+          <Box sx={{ display: "flex", gap: "12px" }}>
+            {availableColors.includes("red") && (
+              <Button
+                onClick={() => handleColorClick("red")}
+                sx={{
+                  backgroundColor: "#f44336",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                }}
+              >
+                Red
+              </Button>
+            )}
+            {availableColors.includes("blue") && (
+              <Button
+                onClick={() => handleColorClick("blue")}
+                sx={{
+                  backgroundColor: "#2196f3",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                }}
+              >
+                Blue
+              </Button>
+            )}
+            {availableColors.includes("green") && (
+              <Button
+                onClick={() => handleColorClick("green")}
+                sx={{
+                  backgroundColor: "#4caf50",
+                  color: "#fff",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                }}
+              >
+                Green
+              </Button>
+            )}
+            {availableColors.includes("yellow") && (
+              <Button
+                onClick={() => handleColorClick("yellow")}
+                sx={{
+                  backgroundColor: "#ffeb3b",
+                  color: "#000",
+                  fontWeight: "bold",
+                  borderRadius: "8px",
+                }}
+              >
+                Yellow
+              </Button>
+            )}
+          </Box>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            variant="outlined"
+            color="error"
+            size="large"
+            onClick={() => {
+              togglePlayer(selectedPlayer);
+              setSelectedPlayer('');
+              setDialogOpen(false);
+            }}
+            sx={{ fontWeight: "bold" }}
+          >
+            Cancel
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </FormControl>
 
-          <><Button onClick={handleClickOpen}>Select your color</Button><Dialog disableEscapeKeyDown open={open} onClose={handleClose}>
-                  <DialogTitle> <b> Select your color </b></DialogTitle>
-                  <DialogContent>
-                    <Box component="form" sx={{ display: 'flex', flexWrap: 'wrap' }}>
-                    
-                      <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-dialog-select-label"> Color </InputLabel>
-                        <Select
-                          labelId={`${x.name}-color-label`}
-                          id="demo-dialog-select"
-                          value={x.color}
-                          onChange={(event) => handleColorChange(event, x.name)}
-                          input={<OutlinedInput label="Select Your Color" />}
-                        >
-                          <MenuItem value="red">Red</MenuItem>
-                          <MenuItem value="blue">Blue</MenuItem>
-                          <MenuItem value="green">Green</MenuItem>
-                          <MenuItem value="yellow">Yellow</MenuItem>
-                        </Select>
-                      </FormControl>
-                    </Box>
-                  </DialogContent>
-                  <DialogActions>
-                    <Button onClick={handleClose}>Cancel</Button>
-                    <Button onClick={handleClose}>Ok</Button>
-                  </DialogActions>
-                </Dialog></>
-        )}
+         
 
+      )}
       
             
       </Box>
           </FormGroup>
+
+          
           
       ))}
+<Box sx={{ backgroundColor: '', mt: 1}}>
+
+  <Typography variant="h5" sx={{ marginBottom: 3 }}>Selected players:</Typography>
+  {chosenPlayers
+    .filter((x) => x.checked && x.color)
+    .map((x) => (
+      <Box key={x.name} sx={{ 
+          display: 'flex', 
+          alignItems: 'center', 
+          backgroundColor: '#F6F6F6', 
+          color: 'white',
+          padding: 1, 
+          borderRadius: 4, 
+          mb: 1
+        }}>
+        <Avatar sx={{ backgroundColor: x.color, marginRight: 2, color: 'black' }}>{x.name[0]}</Avatar>
         <div>
-    <Typography variant="h5">Selected players:</Typography>
-    <ul>
-      {chosenPlayers
-        .filter((x) => x.checked && x.color)
-        .map((x) => (
-          <li key={x.name}  style={{ color: x.color}}>
-            {x.name} - {x.color}
-          </li>
-        ))}
-    </ul>
-  </div>
-            <Button variant="contained" size="large"
-                onClick={startGame} disabled={disableStartButton}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center'
-                  }}
-              > Start Game
-            </Button>
+          <Typography variant="subtitle1" sx={{ marginBottom: 1, color: 'text.primary', fontWeight: 'bold' }}>{x.name}</Typography>
+          <Typography variant="body2" sx={{ color: 'text.secondary', marginBottom: 1,}}>Playing with {x.color}</Typography>
+        </div>
+      </Box>
+    ))}
+   
+  <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%', p: 1 }}>
+    <Button 
+      variant="contained" 
+      size="large" 
+      disabled={disableStartButton}
+      onClick={startGame} 
+      style={{
+        width: '100%',
+        height: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center'
+      }}
+    > Start Game
+    </Button>
+  </Box>
+</Box>
+
         </>
     );
 };

@@ -28,12 +28,13 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
   [`&.${tableCellClasses.head}`]: {
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
-    fontSize: 1,
     fontWeight: "bold",
+   
+   
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    fontWeight: "bold",
+    
   },
 }));
 
@@ -88,7 +89,7 @@ export const Home: React.FC<HomeProps> = ({
           {leaderboardData.length > 0 && (
             <TableContainer component={Paper}>
               <Typography
-                variant="h3"
+                variant="h4"
                 component="div"
                 sx={{
                   m: 2,
