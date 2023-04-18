@@ -14,10 +14,9 @@ import AlertTitle from "@mui/material/AlertTitle";
 
 import * as React from 'react';
 
-import MenuItem from '@mui/material/MenuItem';
 
 import FormControl from "@mui/material/FormControl/FormControl";
-import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, InputLabel, Menu, OutlinedInput, Select, SelectChangeEvent, ThemeProvider, Typography, createMuiTheme } from "@mui/material";
+import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Typography, createMuiTheme } from "@mui/material";
  
 
 
@@ -37,25 +36,22 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
 
   const [addPlayer, setAddPlayer] = useState("");
   const [selectedPlayer, setSelectedPlayer] = useState("");
-  const togglePlayer = (name: string) =>
-  setChosenPlayers(
-    chosenPlayers.map((x) => ({
-      ...x,
-      checked: x.name === name ? !x.checked : x.checked,
-      color: x.name === name && !x.checked ? "" : x.color,
-    }))
-  );
+  const togglePlayer = (name: string) => {
+    setChosenPlayers((prev) =>
+      prev.map((x) => {
+        if (x.name === name) {
+          const newChecked = !x.checked;
+          if (!newChecked && x.color) {
+            setAvailableColors([...availableColors, x.color]); // add the color back to available colors
+          }
+          return { ...x, checked: newChecked, color: newChecked ? x.color : "" };
+        } else {
+          return x;
+        }
+      })
+    );
+  };
 
-  useEffect(() => {
-    // Add back color to available colors if player is unchecked
-    setAvailableColors((prev) => {
-      const uncheckedPlayer = chosenPlayers.find((p) => p.name === selectedPlayer && !p.checked);
-      if (uncheckedPlayer && uncheckedPlayer.color) {
-        return [...prev, uncheckedPlayer.color];
-      }
-      return prev;
-    });
-  }, [chosenPlayers, selectedPlayer]);
 
 
   const startGame = () => {
@@ -73,7 +69,11 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
   const handleColorChange = (color: string, playerName: string) => {
     const updatedPlayers = chosenPlayers.map((player) => {
       if (player.name === playerName) {
-        return { ...player, color: color };
+        if (color === "") {
+          return { ...player, checked: false };
+        } else {
+          return { ...player, color: color };
+        }
       } else {
         return player;
       }
@@ -81,15 +81,16 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
     setChosenPlayers(updatedPlayers);
     setSelectedPlayer("");
     setAnchorEl(null);
-
+  
     // If the player is being unchecked, add their color back to the available colors
-    if (!color) {
+    if (color === "") {
       const player = chosenPlayers.find((p) => p.name === playerName);
       if (player && player.color) {
         setAvailableColors([...availableColors, player.color]);
       }
     }
   };
+  
   
 
   

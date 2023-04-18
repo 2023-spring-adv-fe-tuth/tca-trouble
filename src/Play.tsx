@@ -13,7 +13,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo}) =>
 
     const nav = useNavigate ();
     const [figuresAtHome, setFiguresAtHome] = useState<{ [playerName: string]: number }>(
-        setupInfo.chosenPlayers.reduce((obj, player) => ({ ...obj, [player]: 4 }), {})
+        setupInfo.chosenPlayers.reduce((obj, player) => ({ ...obj, [player ]: 4 }), {})
     );    const [figuresAtFinish, setFiguresAtFinish] = useState<{ [playerName: string]: number }>({});
     const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
     const [playerBumpedCounts, setPlayerBumpedCounts] = useState<{ [playerName: string]: number }>({});
