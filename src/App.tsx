@@ -33,7 +33,12 @@ const App = () => {
   const [results, setGameResults] = useState(hardcodedGameResults);
   
   const [setupInfo, setSetupInfo] = useState <SetupInfo>({start: "", chosenPlayers: []});
-  
+  const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
+
+  const addPlayerRollCounts = (newPlayerRollCounts: { [playerName: string]: number }) => {
+    setPlayerRollCounts(prevState => ({ ...prevState, ...newPlayerRollCounts }));
+  };
+
   const addGameResult = (r: GameResult) => {setGameResults([...results, r]);};
   const theme = createTheme({
     typography: {
@@ -48,8 +53,8 @@ const App = () => {
     <ThemeProvider theme={theme}>
     <Box m={2} p={4}>
       
-    <Typography variant="h4">Tca Trouble</Typography>
-<Typography variant="h5">Companion App</Typography>
+    <Typography variant="h4" sx={{m: 1}}>Tca Trouble</Typography>
+    <Typography variant="h5" sx={{m: 1}}>Companion App</Typography>
 
  
               <HashRouter>
@@ -59,7 +64,8 @@ const App = () => {
                       element={<Home 
                           leaderboardData={calculateLeaderboard(results)}
                           shortestGameDuration={getShortestGameDuration(results)}
-                          longestGameDuration={getLongestGameDuration(results)} 
+                          longestGameDuration={getLongestGameDuration(results)}
+                          playerRollCounts={playerRollCounts}
                           
                         />} 
                     />
@@ -76,7 +82,8 @@ const App = () => {
                       path="/play" 
                       element={<Play 
                           addGameResultFunction={addGameResult}
-                          setupInfo={setupInfo} 
+                          setupInfo={setupInfo}
+                          addPlayerRollCountsFunction={addPlayerRollCounts}
                           
                         />} 
                     />

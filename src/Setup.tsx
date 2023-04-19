@@ -14,11 +14,38 @@ import AlertTitle from "@mui/material/AlertTitle";
 
 import * as React from 'react';
 
-
+import CancelIcon from '@mui/icons-material/Cancel';
 import FormControl from "@mui/material/FormControl/FormControl";
 import { Avatar, Dialog, DialogActions, DialogContent, DialogTitle, Typography, createMuiTheme } from "@mui/material";
+import styled from "@emotion/styled";
  
+const GradientButton = styled(Button)({
+  background: "linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)",
+  borderRadius: 3,
+  border: 0,
+  color: "white",
+  height: 48,
+  padding: "0 30px",
+  boxShadow: "0 3px 5px 2px rgba(255, 105, 135, .3)",
+});
 
+const CustomCancelIcon = styled(CancelIcon)({
+  marginRight: "8px",
+});
+
+const GradientStartButton = styled(Button)({
+  background: "linear-gradient(45deg, #2196F3 30%, #21CBF3 90%)",
+  borderRadius: 3,
+  border: 0,
+  color: "white",
+  height: 48,
+  padding: "0 30px",
+  boxShadow: "0 3px 5px 2px rgba(33, 203, 243, .3)",
+  transition: "background-color 0.2s ease-out",
+  "&:hover": {
+    backgroundColor: "#21CBF3",
+  },
+});
 
 
 export interface SetupProps {
@@ -107,7 +134,7 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
     setChosenPlayers([...chosenPlayers,
       {
         name: addPlayer,
-        checked: true,
+        checked: false,
         color: "",
       },
     ]);
@@ -154,9 +181,26 @@ const handleColorClick = (color: string) => {
           onChange={(e) => setAddPlayer(e.target.value)}
         />
 
-        <Button variant="contained" onClick={validateAddNewPlayer} size="small" sx={{ml: 1}} disabled={disableAddButton}>
-          Add Player
-        </Button>
+<Button
+  variant="contained"
+  onClick={validateAddNewPlayer}
+  size="large"
+  disabled={disableAddButton}
+  sx={{
+    borderRadius: 8,
+    py: 1.5,
+    px: 3,
+    fontWeight: "bold",
+    boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+    color: "white",
+    backgroundColor: "primary.main",
+    "&:hover": {
+      backgroundColor: "primary.dark",
+    },
+  }}
+>
+  Add Player
+</Button>
       </Box>
       
       {
@@ -184,7 +228,7 @@ const handleColorClick = (color: string) => {
            { x.checked && (
   <FormControl sx={{ minWidth: 120 }} size="small">
     <Dialog open={dialogOpen && selectedPlayer === x.name} onClose={handleClose}>        
-          <DialogTitle>Select color for {selectedPlayer}</DialogTitle>
+          <DialogTitle sx={{ textAlign: "center" }}>Select color for {selectedPlayer}</DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <Box sx={{ display: "flex", gap: "12px" }}>
           {availableColors.includes("red") && (
@@ -242,19 +286,19 @@ const handleColorClick = (color: string) => {
         </Box>
       </DialogContent>
       <DialogActions>
-        <Button
-          variant="outlined"
-          color="error"
-          size="large"
-          onClick={() => {
-            togglePlayer(selectedPlayer);
-            setSelectedPlayer('');
-            setDialogOpen(false);
-          }}
-          sx={{ fontWeight: "bold" }}
-        >
-          Cancel
-        </Button>
+      <GradientButton
+  variant="contained"
+  size="large"
+  onClick={() => {
+    togglePlayer(selectedPlayer);
+    setSelectedPlayer("");
+    setDialogOpen(false);
+  }}
+  sx={{ fontWeight: "bold", width: "100%", mr: 2, ml: 2 }}
+>
+  <CustomCancelIcon />
+  Cancel
+</GradientButton>
       </DialogActions>
     </Dialog>
   </FormControl>
@@ -273,7 +317,7 @@ const handleColorClick = (color: string) => {
       ))}
 <Box sx={{ backgroundColor: '', mt: 1}}>
 
-  <Typography variant="h5" sx={{ marginBottom: 3 }}>Selected players:</Typography>
+  <Typography variant="h5" sx={{ marginBottom: 2, }}>Selected players:</Typography>
   {chosenPlayers
     .filter((x) => x.checked && x.color)
     .map((x) => (
@@ -294,24 +338,26 @@ const handleColorClick = (color: string) => {
       </Box>
     ))}
    
-  <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%', p: 1 }}>
-    <Button 
-      variant="contained" 
-      size="large" 
-      disabled={disableStartButton}
-      onClick={startGame} 
-      style={{
-        width: '100%',
-        height: '100%',
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center'
-      }}
-    > Start Game
-    </Button>
+  <Box sx={{ position: 'fixed', bottom: 0, left: 0, width: '100%', p: 1, mt: 1 }}>
+  <GradientStartButton
+  variant="contained"
+  size="large"
+  disabled={disableStartButton}
+  onClick={startGame}
+  sx={{
+    fontWeight: "bold",
+    width: "100%",
+    height: "100%",
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+  }}
+>
+  Start Game
+</GradientStartButton>;
   </Box>
 </Box>
 
         </>
-    );
+    )
 };

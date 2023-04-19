@@ -1,15 +1,16 @@
 import Button from "@mui/material/Button/Button";
 import { useNavigate } from 'react-router-dom';
 import { GameResult, SetupInfo } from './front-end-model';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Typography, Box, Card, CardContent } from "@mui/material";
 
 interface PlayProps {
     addGameResultFunction: (r: GameResult) => void;
     setupInfo: SetupInfo;
+    addPlayerRollCountsFunction: (playerRollCounts: { [playerName: string]: number }) => void;
 }; 
 
-export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo}) => {
+export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, addPlayerRollCountsFunction}) => {
 
     const nav = useNavigate ();
     const [figuresAtHome, setFiguresAtHome] = useState<{ [playerName: string]: number }>(
@@ -94,6 +95,10 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo}) =>
         setPlayerBumpedCounts(prevGameState.playerBumpedCounts);
         setUndoDisabled(true);
       };
+
+      useEffect(() => {
+        addPlayerRollCountsFunction(playerRollCounts);
+      }, [playerRollCounts, addPlayerRollCountsFunction]);
 
     return(
         <>

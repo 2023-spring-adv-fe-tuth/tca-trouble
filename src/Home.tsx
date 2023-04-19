@@ -22,6 +22,7 @@ interface HomeProps {
   leaderboardData: LeaderboardPlayer[];
   shortestGameDuration: number;
   longestGameDuration: number;
+  playerRollCounts: { [playerName: string]: number };
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -52,6 +53,7 @@ export const Home: React.FC<HomeProps> = ({
   leaderboardData,
   shortestGameDuration,
   longestGameDuration,
+  playerRollCounts,
 }) => {
   console.log(leaderboardData);
 
@@ -142,6 +144,12 @@ export const Home: React.FC<HomeProps> = ({
           </Typography>
         </CardContent>
       </Card>
+
+      {Object.entries(playerRollCounts).map(([playerName, count]) => (
+  <Typography key={playerName} variant="body1">
+    {playerName} rolled six {count} {count === 1 ? "time" : "times"}
+  </Typography>
+))}
     </>
   );
 };
