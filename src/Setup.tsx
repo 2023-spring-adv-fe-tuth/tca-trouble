@@ -181,87 +181,88 @@ const handleColorClick = (color: string) => {
               }
               label={x.name}
             />
-           {x.checked && (
-           <FormControl sx={{ minWidth: 120 }} size="small">
-<Dialog open={dialogOpen && Boolean(selectedPlayer)} onClose={handleClose}>        
-<DialogTitle>Select color for {selectedPlayer}</DialogTitle>
-        <DialogContent sx={{ padding: "24px" }}>
-          <Box sx={{ display: "flex", gap: "12px" }}>
-            {availableColors.includes("red") && (
-              <Button
-                onClick={() => handleColorClick("red")}
-                sx={{
-                  backgroundColor: "#f44336",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                }}
-              >
-                Red
-              </Button>
-            )}
-            {availableColors.includes("blue") && (
-              <Button
-                onClick={() => handleColorClick("blue")}
-                sx={{
-                  backgroundColor: "#2196f3",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                }}
-              >
-                Blue
-              </Button>
-            )}
-            {availableColors.includes("green") && (
-              <Button
-                onClick={() => handleColorClick("green")}
-                sx={{
-                  backgroundColor: "#4caf50",
-                  color: "#fff",
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                }}
-              >
-                Green
-              </Button>
-            )}
-            {availableColors.includes("yellow") && (
-              <Button
-                onClick={() => handleColorClick("yellow")}
-                sx={{
-                  backgroundColor: "#ffeb3b",
-                  color: "#000",
-                  fontWeight: "bold",
-                  borderRadius: "8px",
-                }}
-              >
-                Yellow
-              </Button>
-            )}
-          </Box>
-        </DialogContent>
-        <DialogActions>
-          <Button
-            variant="outlined"
-            color="error"
-            size="large"
-            onClick={() => {
-              togglePlayer(selectedPlayer);
-              setSelectedPlayer('');
-              setDialogOpen(false);
-            }}
-            sx={{ fontWeight: "bold" }}
-          >
-            Cancel
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </FormControl>
+           { x.checked && (
+  <FormControl sx={{ minWidth: 120 }} size="small">
+    <Dialog open={dialogOpen && selectedPlayer === x.name} onClose={handleClose}>        
+          <DialogTitle>Select color for {selectedPlayer}</DialogTitle>
+      <DialogContent sx={{ padding: "24px" }}>
+        <Box sx={{ display: "flex", gap: "12px" }}>
+          {availableColors.includes("red") && (
+            <Button
+              onClick={() => handleColorClick("red")}
+              sx={{
+                backgroundColor: "#f44336",
+                color: "#fff",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Red
+            </Button>
+          )}
+          {availableColors.includes("blue") && (
+            <Button
+              onClick={() => handleColorClick("blue")}
+              sx={{
+                backgroundColor: "#2196f3",
+                color: "#fff",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Blue
+            </Button>
+          )}
+          {availableColors.includes("green") && (
+            <Button
+              onClick={() => handleColorClick("green")}
+              sx={{
+                backgroundColor: "#4caf50",
+                color: "#fff",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Green
+            </Button>
+          )}
+          {availableColors.includes("yellow") && (
+            <Button
+              onClick={() => handleColorClick("yellow")}
+              sx={{
+                backgroundColor: "#ffeb3b",
+                color: "#000",
+                fontWeight: "bold",
+                borderRadius: "8px",
+              }}
+            >
+              Yellow
+            </Button>
+          )}
+        </Box>
+      </DialogContent>
+      <DialogActions>
+        <Button
+          variant="outlined"
+          color="error"
+          size="large"
+          onClick={() => {
+            togglePlayer(selectedPlayer);
+            setSelectedPlayer('');
+            setDialogOpen(false);
+          }}
+          sx={{ fontWeight: "bold" }}
+        >
+          Cancel
+        </Button>
+      </DialogActions>
+    </Dialog>
+  </FormControl>
+)}
 
          
 
-      )}
+   
       
             
       </Box>
