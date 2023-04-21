@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { GameResult, SetupInfo } from './front-end-model';
 import { useEffect, useState } from 'react';
 import { Typography, Box, Card, CardContent } from "@mui/material";
+import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 
 interface PlayProps {
     addGameResultFunction: (r: GameResult) => void;
@@ -25,6 +26,13 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
         addGameResultFunction({winner: winner, players: setupInfo.chosenPlayers, start: setupInfo.start, end: new Date().toISOString()})
         nav (-2);
     };
+    const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+const [confirmationAction, setConfirmationAction] = useState<(() => void) | null>(null);
+const openConfirmationDialog = (action: () => void) => {
+  setConfirmationAction(action);
+  setIsConfirmationDialogOpen(true);
+};
+
 
     const [undoDisabled, setUndoDisabled] = useState(true);
 
@@ -40,42 +48,46 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
     };
 
     const addFigureAtFinish = (playerName: string) => {
-        setPrevGameState({
-            figuresAtHome,
-            figuresAtFinish,
-            playerRollCounts,
-            playerBumpedCounts,
+      openConfirmationDialog(() => {
+          setPrevGameState({
+              figuresAtHome,
+              figuresAtFinish,
+              playerRollCounts,
+              playerBumpedCounts,
           });
-        setFiguresAtHome(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) - 1 }));
-        setFiguresAtFinish(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-        setUndoDisabled(false);
-      };
-
-      
-
-    const incrementPlayerRollCount = (playerName: string) => {
-        setPrevGameState({
-            figuresAtHome,
-            figuresAtFinish,
-            playerRollCounts,
-            playerBumpedCounts,
+          setFiguresAtHome((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) - 1 }));
+          setFiguresAtFinish((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+          setUndoDisabled(false);
+      });
+  };
+  
+  const incrementPlayerBumpedCount = (playerName: string) => {
+      openConfirmationDialog(() => {
+          setPrevGameState({
+              figuresAtHome,
+              figuresAtFinish,
+              playerRollCounts,
+              playerBumpedCounts,
           });
-        setPlayerRollCounts(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-        setUndoDisabled(false);
-    };
-
-    const incrementPlayerBumpedCount = (playerName: string) => {
-        setPrevGameState({
-            figuresAtHome,
-            figuresAtFinish,
-            playerRollCounts,
-            playerBumpedCounts,
+  
+          setPlayerBumpedCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+          setUndoDisabled(false);
+      });
+  };
+  
+  const incrementPlayerRollCount = (playerName: string) => {
+      openConfirmationDialog(() => {
+          setPrevGameState({
+              figuresAtHome,
+              figuresAtFinish,
+              playerRollCounts,
+              playerBumpedCounts,
           });
-          
-        setPlayerBumpedCounts(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-        setUndoDisabled(false);
-    };
-
+          setPlayerRollCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+          setUndoDisabled(false);
+      });
+  };
+  
     const [prevGameState, setPrevGameState] = useState<{
         figuresAtHome: { [playerName: string]: number };
         figuresAtFinish: { [playerName: string]: number };
@@ -102,6 +114,30 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
 
     return(
         <>
+        <Dialog open={isConfirmationDialogOpen} onClose={() => setIsConfirmationDialogOpen(false)}>
+    <DialogTitle>Confirm Action</DialogTitle>
+    <DialogContent>
+        <DialogContentText>
+            Are you sure you want to perform this action?
+        </DialogContentText>
+    </DialogContent>
+    <DialogActions>
+        <Button onClick={() => {
+            setIsConfirmationDialogOpen(false);
+            confirmationAction?.();
+        }} color="primary">
+            Confirm
+        </Button>
+        <Button onClick={() => {
+    undoLastAction();
+    setIsConfirmationDialogOpen(false);
+}} color="secondary" autoFocus>
+    Cancel
+</Button>
+
+    </DialogActions>
+</Dialog>
+
       <Typography variant="h2">Play</Typography>
       {
         setupInfo.chosenPlayers.map(x => (
@@ -120,9 +156,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
 
                 <Typography variant="body1"><Typography variant="body1">You rolled SIX {playerRollCounts[x] || 0} {playerRollCounts[x] === 1 ? 'time' : 'times'}</Typography></Typography>
                 <Button variant="contained" size="small" onClick={() => endGame(x)} sx={{ mr: 1 }}>{x} Won</Button>
-                <Button variant="contained" size="small" onClick={undoLastAction} sx={{ mr: 1 }} disabled={undoDisabled}>
-    Undo Last Action
-</Button>
+          
               </CardContent>
             </Card>
           </Box>
