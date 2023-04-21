@@ -145,11 +145,49 @@ export const Home: React.FC<HomeProps> = ({
         </CardContent>
       </Card>
 
-      {Object.entries(playerRollCounts).map(([playerName, count]) => (
-  <Typography key={playerName} variant="body1">
-    {playerName} rolled six {count} {count === 1 ? "time" : "times"}
-  </Typography>
-))}
+      <Card
+  sx={{
+    width: "100%",
+    m: 2,
+  }}
+>
+  <CardContent>
+    <Typography variant="h3" component="div">
+      Who rolled 6 the most?
+    </Typography>
+    {Object.keys(playerRollCounts).length > 0 ? (
+      <TableContainer component={Paper}>
+        <Table aria-label="customized table">
+          <TableHead>
+            <TableRow>
+              <StyledTableCell>Name</StyledTableCell>
+              <StyledTableCell align="left">Who rolled 6 the most?</StyledTableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {Object.keys(playerRollCounts)
+              .sort((a, b) => playerRollCounts[b] - playerRollCounts[a])
+              .map((x) => (
+                <StyledTableRow key={x}>
+                  <StyledTableCell component="th" scope="row">
+                    {x}
+                  </StyledTableCell>
+                  <StyledTableCell align="left">
+                    {playerRollCounts[x]}
+                  </StyledTableCell>
+                </StyledTableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    ) : (
+      <Typography variant="body1" component="div">
+        No stats available. Play a game to see your stats!
+      </Typography>
+    )}
+  </CardContent>
+</Card>
+
     </>
   );
 };

@@ -149,10 +149,21 @@ const [dialogOpen, setDialogOpen] = React.useState(false);
 
 const [availableColors, setAvailableColors] = useState(["red", "blue", "green", "yellow"]);
 
-const handleClose = () => {
-  setAvailableColors(["red", "blue", "green", "yellow"]);
+const handleColorClose = () => {
+  const selectedColorsCount = selectedColors.length;
+  const chosenPlayersCount = chosenPlayers.filter((p) => p.name === selectedPlayer).length;
+
+  if (selectedColorsCount === 0 || selectedColorsCount !== chosenPlayersCount) {
+    return;
+  }
+
+  handleColorChange(selectedColors[0], selectedPlayer);
+  setSelectedColors([]);
+  setAnchorEl(null);
   setDialogOpen(false);
 };
+
+
 
 const handleColorClick = (color: string) => {
   handleColorChange(color, selectedPlayer);
@@ -227,7 +238,7 @@ const handleColorClick = (color: string) => {
             />
            { x.checked && (
   <FormControl sx={{ minWidth: 120 }} size="small">
-    <Dialog open={dialogOpen && selectedPlayer === x.name} onClose={handleClose}>        
+    <Dialog open={dialogOpen && selectedPlayer === x.name} onClose={handleColorClose}>        
           <DialogTitle sx={{ textAlign: "center" }}>Select color for {selectedPlayer}</DialogTitle>
       <DialogContent sx={{ padding: "24px" }}>
         <Box sx={{ display: "flex", gap: "12px" }}>
@@ -286,6 +297,8 @@ const handleColorClick = (color: string) => {
         </Box>
       </DialogContent>
       <DialogActions>
+  
+
       <GradientButton
   variant="contained"
   size="large"
