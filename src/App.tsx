@@ -51,7 +51,7 @@ const App = () => {
     },});
   return (
     <ThemeProvider theme={theme}>
-    <Box m={2} p={4}>
+    <Box m={1} p={2}>
       
     <Typography variant="h4" sx={{m: 1}}>Tca Trouble</Typography>
     <Typography variant="h5" sx={{m: 1}}>Companion App</Typography>
