@@ -1,7 +1,7 @@
 export interface GameResult {
     winner: string;
     players: string[];
-
+    
     start: string;
     end: string;
 
@@ -16,8 +16,8 @@ export interface LeaderboardPlayer {
 
 export interface SetupInfo {
     start: string;
-    chosenPlayers: string[];
-};
+    chosenPlayers: { name: string; color: string }[];
+  }
 
 
 export type GetPreviousPlayersFunc = (results: GameResult[]) => string[];

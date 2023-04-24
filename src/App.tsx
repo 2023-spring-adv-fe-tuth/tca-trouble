@@ -84,6 +84,7 @@ const App = () => {
                           addGameResultFunction={addGameResult}
                           setupInfo={setupInfo}
                           addPlayerRollCountsFunction={addPlayerRollCounts}
+                          chosenPlayers={setupInfo.chosenPlayers}
                           
                         />} 
                     />

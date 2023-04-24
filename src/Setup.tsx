@@ -84,7 +84,9 @@ export const Setup: React.FC<SetupProps> = ({ previousPlayers, setSetupInfo }) =
   const startGame = () => {
     setSetupInfo({
       start: new Date().toISOString(),
-      chosenPlayers: chosenPlayers.filter((x) => x.checked).map((x) => x.name),
+      chosenPlayers: chosenPlayers
+        .filter((x) => x.checked)
+        .map((x) => ({ name: x.name, color: x.color })),
     });
     nav("/play");
   };

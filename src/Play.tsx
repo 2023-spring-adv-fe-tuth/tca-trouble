@@ -6,191 +6,217 @@ import { Typography, Box, Card, CardContent, IconButton, Divider } from "@mui/ma
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { AddCircleOutline, ArrowForward, CancelOutlined } from "@mui/icons-material";
 import CasinoIcon from '@mui/icons-material/Casino';
+
 interface PlayProps {
     addGameResultFunction: (r: GameResult) => void;
     setupInfo: SetupInfo;
     addPlayerRollCountsFunction: (playerRollCounts: { [playerName: string]: number }) => void;
+    chosenPlayers: { name: string; color: string }[];
 }; 
 
-export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, addPlayerRollCountsFunction}) => {
+export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, addPlayerRollCountsFunction, chosenPlayers}) => {
 
     const nav = useNavigate ();
-    const [figuresAtHome, setFiguresAtHome] = useState<{ [playerName: string]: number }>(
-        setupInfo.chosenPlayers.reduce((obj, player) => ({ ...obj, [player ]: 4 }), {})
-    );    const [figuresAtFinish, setFiguresAtFinish] = useState<{ [playerName: string]: number }>({});
-    const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
-    const [playerBumpedCounts, setPlayerBumpedCounts] = useState<{ [playerName: string]: number }>({});
 
-    console.log (setupInfo);
+    const endGame = () => {
+        nav(-2);
+    }
 
-    const endGame = (winner: string) => {
-        addGameResultFunction({winner: winner, players: setupInfo.chosenPlayers, start: setupInfo.start, end: new Date().toISOString()})
-        nav (-2);
+    const [open, setOpen] = useState(false);
+    const [winner, setWinner] = useState("");
+
+    const handleClickOpen = () => {
+        setOpen(true);
+    }
+
+    const handleClose = () => {
+        setOpen(false);
+    }
+
+    const handleWinner = (winner: string) => {
+        setWinner(winner);
+        setOpen(false);
+    }
+
+    useEffect(() => {
+        if (winner !== "") {
+            const newGameResult: GameResult = {
+                winner: winner,
+                players: chosenPlayers.map((player) => player.name),
+                start: setupInfo.start,
+                end: new Date().toISOString()
+            };
+            addGameResultFunction(newGameResult);
+            endGame();
+        }
+    }, [winner]);
+
+    const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: {score: number, bumped: number, roll6: number} }>({});
+
+    const handleScore = (playerName: string) => {
+        setPlayerRollCounts((prevCounts) => {
+            const updatedCounts = {...prevCounts};
+            if (updatedCounts[playerName]) {
+                updatedCounts[playerName].score += 1;
+            } else {
+                updatedCounts[playerName] = {score: 1, bumped: 0, roll6: 0};
+            }
+            return updatedCounts;
+        });
     };
-    const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
-const [confirmationAction, setConfirmationAction] = useState<(() => void) | null>(null);
-const openConfirmationDialog = (action: () => void) => {
-  setConfirmationAction(action);
-  setIsConfirmationDialogOpen(true);
-};
 
-const [dialogOpen, setDialogOpen] = useState(false);
-const [dialogMessage, setDialogMessage] = useState("");
-
-const showDialog = (message: string) => {
-  setDialogMessage(message);
-  setDialogOpen(true);
-};
-    const [undoDisabled, setUndoDisabled] = useState(true);
-
-    const addFigureAtHome = (playerName: string) => {
-        setPrevGameState({
-            figuresAtHome,
-            figuresAtFinish,
-            playerRollCounts,
-            playerBumpedCounts,
-          });
-        setFiguresAtHome(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-        setUndoDisabled(false);
+    const handleBumped = (playerName: string) => {
+        setPlayerRollCounts((prevCounts) => {
+            const updatedCounts = {...prevCounts};
+            if (updatedCounts[playerName]) {
+                updatedCounts[playerName].bumped += 1;
+            } else {
+                updatedCounts[playerName] = {score: 0, bumped: 1, roll6: 0};
+            }
+            return updatedCounts;
+        });
     };
 
-    const addFigureAtFinish = (playerName: string) => {
-      openConfirmationDialog(() => {
-          setPrevGameState({
-              figuresAtHome,
-              figuresAtFinish,
-              playerRollCounts,
-              playerBumpedCounts,
-          });
-          setFiguresAtHome((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) - 1 }));
-          setFiguresAtFinish((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-          setUndoDisabled(false);
-          setIsConfirmationDialogOpen(false);
-    const message = `${playerName} looks like you scored!`
-    showDialog(message);
-      });
-  };
-  
-  const incrementPlayerBumpedCount = (playerName: string) => {
-      openConfirmationDialog(() => {
-          setPrevGameState({
-              figuresAtHome,
-              figuresAtFinish,
-              playerRollCounts,
-              playerBumpedCounts,
-          });
-  
-          setPlayerBumpedCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-          setUndoDisabled(false);
-          setIsConfirmationDialogOpen(false);
-    const message = `It looks like you been bumped ${playerName}!`
-    showDialog(message);
-      });
-  };
-  
-  const incrementPlayerRollCount = (playerName: string) => {
-      openConfirmationDialog(() => {
-          setPrevGameState({
-              figuresAtHome,
-              figuresAtFinish,
-              playerRollCounts,
-              playerBumpedCounts,
-          });
-          setPlayerRollCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
-          setUndoDisabled(false);
-          setIsConfirmationDialogOpen(false);
-          const message = `It looks like you rolled 6 ${playerName}!`
-          showDialog(message);
-            
-      });
-  };
-  
-    const [prevGameState, setPrevGameState] = useState<{
-        figuresAtHome: { [playerName: string]: number };
-        figuresAtFinish: { [playerName: string]: number };
-        playerRollCounts: { [playerName: string]: number };
-        playerBumpedCounts: { [playerName: string]: number };
-      }>({
-        figuresAtHome: {},
-        figuresAtFinish: {},
-        playerRollCounts: {},
-        playerBumpedCounts: {},
-      });
+    const handleRoll6 = (playerName: string) => {
+        setPlayerRollCounts((prevCounts) => {
+            const updatedCounts = {...prevCounts};
+            if (updatedCounts[playerName]) {
+                updatedCounts[playerName].roll6 += 1;
+            } else {
+                updatedCounts[playerName] = {score: 0, bumped: 0, roll6: 1};
+            }
+            return updatedCounts;
+        });
+    };
 
-      const undoLastAction = () => {
-        setFiguresAtHome(prevGameState.figuresAtHome);
-        setFiguresAtFinish(prevGameState.figuresAtFinish);
-        setPlayerRollCounts(prevGameState.playerRollCounts);
-        setPlayerBumpedCounts(prevGameState.playerBumpedCounts);
-        setUndoDisabled(true);
-      };
+   
 
-      useEffect(() => {
-        addPlayerRollCountsFunction(playerRollCounts);
-      }, [playerRollCounts, addPlayerRollCountsFunction]);
 
-    return(
-        <>
-        <Dialog open={isConfirmationDialogOpen} onClose={() => setIsConfirmationDialogOpen(false)}>
-    <DialogTitle>Confirm Action</DialogTitle>
-    <DialogContent>
-        <DialogContentText>
-        {dialogMessage}
-        </DialogContentText>
-    </DialogContent>
-    <DialogActions sx={{ justifyContent: 'center' }}>
-        <Button onClick={() => {
-            setIsConfirmationDialogOpen(false);
-            confirmationAction?.();
-        }} color="primary">
-            Confirm
-        </Button>
-        <Button onClick={() => {
-    undoLastAction();
-    setIsConfirmationDialogOpen(false);
-}} color="secondary" autoFocus>
-    Cancel
+    
+    return (
+        <Box>
+            <Box sx={{display: "flex", justifyContent: "space-between", alignItems: "center"}}>
+                
+
+                <IconButton onClick={handleClickOpen}>
+                    <CasinoIcon sx={{fontSize: "3rem"}}/>
+                </IconButton>
+
+                <Dialog open={open} onClose={handleClose}>
+                    <DialogTitle>Who won?</DialogTitle>
+                    <DialogContent>
+                        <DialogContentText>
+                            Please select the winner of the game.
+                        </DialogContentText>
+                        <Divider sx={{margin: "1rem"}}/>
+                        {chosenPlayers.map((player) => (
+                            <Button key={player.name} onClick={() => handleWinner(player.name)} sx={{margin: "1rem"}}>
+                                {player.name}
+                            </Button>
+                        ))}
+                    </DialogContent>
+                    <DialogActions>
+                        <Button onClick={handleClose}>
+                            <CancelOutlined/>
+                        </Button>
+                    </DialogActions>
+                </Dialog>
+            </Box>
+                            
+            <Box>
+                {chosenPlayers.map((player) => (
+                  <Card
+                  sx={{
+                    mb: 2,
+                    backgroundImage: `linear-gradient(to bottom right, white, ${player.color})`,
+                    
+                  }}
+                  key={player.name}
+                >
+                  <CardContent>
+                  <Typography variant="h5" component="h2" sx={{ fontSize: "2rem", color: "primary.main" }}>
+  {player.name}
+</Typography>
+
+<Button
+  sx={{
+    mr: 1,
+    background: 'linear-gradient(to right, #34D399, #10B981)',
+    color: '#fff',
+    '&:hover': {
+      background: 'linear-gradient(to right, #10B981, #34D399)',
+    },
+  }}
+  variant="contained"
+  size="small"
+  startIcon={<AddCircleOutline sx={{ fontSize: 24, fontWeight: 'bold' }} />}
+  onClick={() => handleScore(player.name)}
+>
+  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+    Score
+  </Typography>
 </Button>
 
-    </DialogActions>
-</Dialog>
+<Button
+  sx={{
+    mr: 1,
+    background: 'linear-gradient(to right, #EF4444, #DC2626)',
+    color: '#fff',
+    '&:hover': {
+      background: 'linear-gradient(to right, #DC2626, #EF4444)',
+    },
+  }}
+  variant="contained"
+  size="small"
+  startIcon={<CancelOutlined sx={{ fontSize: 24, fontWeight: 'bold' }} />}
+  onClick={() => handleBumped(player.name)}
+>
+  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+    Bump
+  </Typography>
+</Button>
 
-      <Typography variant="h2">Play</Typography>
-      {
-        setupInfo.chosenPlayers.map(x => (
-          
+<Button
+  sx={{
+    mr: 1,
+    background: 'linear-gradient(to right, #3B82F6, #2563EB)',
+    color: '#fff',
+    '&:hover': {
+      background: 'linear-gradient(to right, #2563EB, #3B82F6)',
+    },
+  }}
+  variant="contained"
+  size="small"
+  startIcon={<CasinoIcon sx={{ fontSize: 24, fontWeight: 'bold' }} />}
+  onClick={() => handleRoll6(player.name)}
+>
+  <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
+    Roll 6
+  </Typography>
+</Button>
 
-<Box sx={{ mb: 2 }}>
-<Card>
-  <CardContent>
-    <Typography variant="h5" sx={{ mb: 1 }}>{x}</Typography>
-    
-    <Box sx={{ display: "flex", alignItems: "center", mb: 1 }}>
-      <Button sx={{ mr: 1}} variant="outlined" color="success" size="small" startIcon={<AddCircleOutline />} onClick={() => addFigureAtFinish(x)}>Score</Button>
-      <Button sx={{ mr: 1}} variant="outlined" color="error" size="small" startIcon={<CancelOutlined />} onClick={() => incrementPlayerBumpedCount(x)}>Bumped</Button>
-      <Button variant="outlined" size="small" startIcon={<CasinoIcon />} onClick={() => incrementPlayerRollCount(x)}>Roll 6 </Button>
-    </Box>
+                    <Divider sx={{ m: 1 }} />
+                    <Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
+  {playerRollCounts[player.name] ? playerRollCounts[player.name].score : 0} scores
+</Typography>
+<Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
+  {playerRollCounts[player.name] ? playerRollCounts[player.name].bumped : 0} bumped
+</Typography>
+<Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
+  {playerRollCounts[player.name] ? playerRollCounts[player.name].roll6 : 0} rolled 6
+</Typography>
 
-    <Box sx={{ display: "flex", flexDirection: "column", mb: 1 }}>
-      <Typography variant="body1" sx={{ mb: 1 }}>Finish: {figuresAtFinish[x] || 0} figures</Typography>
-      <Typography variant="body1" sx={{ mb: 1 }}>Home or In-Play: {figuresAtHome[x] || 0} figures</Typography>
-    </Box>
-          <Divider sx={{ mb: 1 }} />
-    <Box sx={{ display: "flex", flexDirection: "column" }}>
-      <Typography variant="body1" sx={{ mb: 1 }}>You have been bumped {playerBumpedCounts[x] || 0} {playerBumpedCounts[x] === 1 ? 'time' : 'times'}</Typography>
-      <Typography variant="body1" sx={{ mb: 1 }}>You rolled SIX {playerRollCounts[x] || 0} {playerRollCounts[x] === 1 ? 'time' : 'times'}</Typography>
-    </Box>
-
-    <Box sx={{ display: "flex", alignItems: "center", mt: 1 }}>
-      <Button size="small" onClick={() => endGame(x)}> {x} Won</Button>
-    
-    </Box>
-
-  </CardContent>
-</Card>
-</Box>
-        ))
-      }
-    </>
+                  </CardContent>
+                </Card>
+                
+                 
+                ))}
+            </Box>
+            
+            <Button onClick={endGame} sx={{margin: "1rem"}}>
+                <ArrowForward/>
+            </Button>
+            
+        </Box>
     );
 };
