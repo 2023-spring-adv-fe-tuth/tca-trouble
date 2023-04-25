@@ -15,7 +15,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-
+import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";  
 import { durationFormatter } from "human-readable";
 
 interface HomeProps {
@@ -49,6 +49,21 @@ const StyledTableRow = styled(TableRow)(({ theme }) => ({
   },
 }));
 
+const GradientButton = styled(Button)(({ theme }) => ({
+  background: 'linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%)',
+  border: 0,
+  borderRadius: 3,
+  boxShadow: '0 3px 5px 2px rgba(255, 105, 135, .3)',
+  color: 'white',
+  height: 48,
+  padding: '0 30px',
+  '&:hover': {
+    background: 'linear-gradient(45deg, #FF8E53 30%, #FE6B8B 90%)',
+  },
+}));
+
+
+
 export const Home: React.FC<HomeProps> = ({
   leaderboardData,
   shortestGameDuration,
@@ -63,18 +78,25 @@ export const Home: React.FC<HomeProps> = ({
 
   return (
     <>
-      <Button
-        variant="contained"
-        size="large"
-        onClick={() => nav("/setup")}
-        sx={{
-          width: "100%",
-          m: 2,
-        }}
-      >
-        {" "}
-        Play
-      </Button>
+<Button
+  variant="contained"
+  size="large"
+  onClick={() => nav("/setup")}
+  startIcon={<PlayCircleOutlineIcon />}
+  sx={{
+    width: "100%",
+    m: 2,
+    borderRadius: "20px",
+    bgcolor: "#6C63FF",
+    '&:hover': {
+      bgcolor: "#5A52CC",
+    },
+  }}
+>
+  <Typography variant="button" fontWeight="bold">
+    Play
+  </Typography>
+</Button>
       <Card
         sx={{
           width: "100%",

@@ -2,7 +2,7 @@
   "name": "tca-trouble",
   "version": "0.1.0",
   "private": true,
-  "homepage": "https://2023-spring-adv-fe-tuth/tca-trouble",
+  
   "dependencies": {
     "@aws-sdk/util-dynamodb": "^3.316.0",
     "@emotion/react": "^11.10.6",
