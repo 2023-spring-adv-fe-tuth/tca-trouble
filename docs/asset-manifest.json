@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/tca-trouble/static/css/main.9d06abec.css",
+    "main.js": "/tca-trouble/static/js/main.fda2508b.js",
+    "static/js/787.a092a271.chunk.js": "/tca-trouble/static/js/787.a092a271.chunk.js",
+    "index.html": "/tca-trouble/index.html",
+    "main.9d06abec.css.map": "/tca-trouble/static/css/main.9d06abec.css.map",
+    "main.fda2508b.js.map": "/tca-trouble/static/js/main.fda2508b.js.map",
+    "787.a092a271.chunk.js.map": "/tca-trouble/static/js/787.a092a271.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9d06abec.css",
+    "static/js/main.fda2508b.js"
+  ]
+}

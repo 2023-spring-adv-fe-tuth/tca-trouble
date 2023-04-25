@@ -25,7 +25,10 @@ const hardcodedGameResults: GameResult[] = [
         },
         {
           winner: "Robbie" , players: ["Robbie", "Joe"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        }
+        },
+        {
+          winner: "Stefanie", players: ["Stefanie", "Ezekiel"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
+        },
   ];
 
 const App = () => {
@@ -34,6 +37,8 @@ const App = () => {
   
   const [setupInfo, setSetupInfo] = useState <SetupInfo>({start: "", chosenPlayers: []});
   const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
+
+
 
   const addPlayerRollCounts = (newPlayerRollCounts: { [playerName: string]: number }) => {
     setPlayerRollCounts(prevState => ({ ...prevState, ...newPlayerRollCounts }));

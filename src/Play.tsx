@@ -6,6 +6,8 @@ import { Typography, Box, Card, CardContent, IconButton, Divider } from "@mui/ma
 import { Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle } from '@mui/material';
 import { AddCircleOutline, ArrowForward, CancelOutlined } from "@mui/icons-material";
 import CasinoIcon from '@mui/icons-material/Casino';
+import CheckCircleOutlineIcon from '@mui/icons-material/CheckCircleOutline';
+import UndoIcon from '@mui/icons-material/Undo';
 
 interface PlayProps {
     addGameResultFunction: (r: GameResult) => void;
@@ -14,7 +16,7 @@ interface PlayProps {
     chosenPlayers: { name: string; color: string }[];
 }; 
 
-export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, addPlayerRollCountsFunction, chosenPlayers}) => {
+export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, chosenPlayers, addPlayerRollCountsFunction }) => {
 
     const nav = useNavigate ();
 
@@ -22,12 +24,15 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
         nav(-2);
     }
 
+    
+
     const [open, setOpen] = useState(false);
     const [winner, setWinner] = useState("");
 
     const handleClickOpen = () => {
         setOpen(true);
     }
+
 
     const handleClose = () => {
         setOpen(false);
@@ -51,47 +56,129 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
         }
     }, [winner]);
 
-    const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: {score: number, bumped: number, roll6: number} }>({});
+    const [dialogOpen, setDialogOpen] = useState(false);
+const [dialogMessage, setDialogMessage] = useState("");
 
-    const handleScore = (playerName: string) => {
-        setPlayerRollCounts((prevCounts) => {
-            const updatedCounts = {...prevCounts};
-            if (updatedCounts[playerName]) {
-                updatedCounts[playerName].score += 1;
-            } else {
-                updatedCounts[playerName] = {score: 1, bumped: 0, roll6: 0};
-            }
-            return updatedCounts;
+
+
+const showDialog = (message: string) => {
+  setDialogMessage(message);
+  setDialogOpen(true);
+};
+
+const [figuresAtHome, setFiguresAtHome] = useState<{ [playerName: string]: number }>(
+  chosenPlayers.reduce((obj, player) => {
+    obj[player.name] = 4;
+    return obj;
+  }, {} as { [playerName: string]: number })
+);
+
+  const [figuresAtFinish, setFiguresAtFinish] = useState<{ [playerName: string]: number }>({});
+  const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
+  const [playerBumpedCounts, setPlayerBumpedCounts] = useState<{ [playerName: string]: number }>({});
+
+  const [undoDisabled, setUndoDisabled] = useState(true);
+
+  const [isConfirmationDialogOpen, setIsConfirmationDialogOpen] = useState(false);
+  const [confirmationAction, setConfirmationAction] = useState<(() => void) | null>(null);
+  const openConfirmationDialog = (action: () => void) => {
+    setConfirmationAction(action);
+    setIsConfirmationDialogOpen(true);
+
+  };
+
+  const addFigureAtHome = (playerName: string) => {
+    setPrevGameState({
+        figuresAtHome,
+        figuresAtFinish,
+        playerRollCounts,
+        playerBumpedCounts,
+      });
+    setFiguresAtHome(prevState => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+    setUndoDisabled(false);
+    setIsConfirmationDialogOpen(false);
+    const message = `${playerName} looks like you scored!`
+    showDialog(message);
+    
+};
+
+  const addFigureAtFinish = (playerName: string) => {
+    openConfirmationDialog(() => {
+        setPrevGameState({
+            figuresAtHome,
+            figuresAtFinish,
+            playerRollCounts,
+            playerBumpedCounts,
         });
-    };
-
-    const handleBumped = (playerName: string) => {
-        setPlayerRollCounts((prevCounts) => {
-            const updatedCounts = {...prevCounts};
-            if (updatedCounts[playerName]) {
-                updatedCounts[playerName].bumped += 1;
-            } else {
-                updatedCounts[playerName] = {score: 0, bumped: 1, roll6: 0};
-            }
-            return updatedCounts;
-        });
-    };
-
-    const handleRoll6 = (playerName: string) => {
-        setPlayerRollCounts((prevCounts) => {
-            const updatedCounts = {...prevCounts};
-            if (updatedCounts[playerName]) {
-                updatedCounts[playerName].roll6 += 1;
-            } else {
-                updatedCounts[playerName] = {score: 0, bumped: 0, roll6: 1};
-            }
-            return updatedCounts;
-        });
-    };
-
-   
+        setFiguresAtHome((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) - 1 }));
+        setFiguresAtFinish((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+        setUndoDisabled(false);
+        setIsConfirmationDialogOpen(false);
+    const message = `${playerName} looks like you scored!`
+    showDialog(message);
+    });
+};
 
 
+
+const incrementPlayerBumpedCount = (playerName: string) => {
+  openConfirmationDialog(() => {
+      setPrevGameState({
+          figuresAtHome,
+          figuresAtFinish,
+          playerRollCounts,
+          playerBumpedCounts,
+      });
+
+      setPlayerBumpedCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+      setUndoDisabled(false);
+      setIsConfirmationDialogOpen(false);
+      const message = `It looks like you been bumped ${playerName}!`
+      showDialog(message);
+  });
+};
+
+const incrementPlayerRollCount = (playerName: string) => {
+  openConfirmationDialog(() => {
+    setPrevGameState({
+      figuresAtHome,
+      figuresAtFinish,
+      playerRollCounts,
+      playerBumpedCounts,
+    });
+    setPlayerRollCounts((prevState) => ({ ...prevState, [playerName]: (prevState[playerName] || 0) + 1 }));
+    setUndoDisabled(false);
+    setIsConfirmationDialogOpen(false);
+    const message = `It looks like you rolled 6 ${playerName}!`
+    showDialog(message);
+  });
+};
+
+
+const [prevGameState, setPrevGameState] = useState<{
+  figuresAtHome: { [playerName: string]: number };
+  figuresAtFinish: { [playerName: string]: number };
+  playerRollCounts: { [playerName: string]: number };
+  playerBumpedCounts: { [playerName: string]: number };
+}>({
+  figuresAtHome: {},
+  figuresAtFinish: {},
+  playerRollCounts: {},
+  playerBumpedCounts: {},
+});
+
+const undoLastAction = () => {
+  setFiguresAtHome(prevGameState.figuresAtHome);
+  setFiguresAtFinish(prevGameState.figuresAtFinish);
+  setPlayerRollCounts(prevGameState.playerRollCounts);
+  setPlayerBumpedCounts(prevGameState.playerBumpedCounts);
+  setUndoDisabled(true);
+};
+
+    
+useEffect(() => {
+  addPlayerRollCountsFunction(playerRollCounts);
+}, [playerRollCounts, addPlayerRollCountsFunction]);
     
     return (
         <Box>
@@ -99,7 +186,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
                 
 
                 <IconButton onClick={handleClickOpen}>
-                    <CasinoIcon sx={{fontSize: "3rem"}}/>
+                    Choose the winner !<CasinoIcon sx={{fontSize: "3rem"}}/>
                 </IconButton>
 
                 <Dialog open={open} onClose={handleClose}>
@@ -122,7 +209,46 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
                     </DialogActions>
                 </Dialog>
             </Box>
-                            
+            <Dialog
+  open={isConfirmationDialogOpen}
+  
+  aria-labelledby="confirmation-dialog-title"
+  aria-describedby="confirmation-dialog-description"
+  disableEscapeKeyDown
+                          
+    >
+  <DialogTitle id="confirmation-dialog-title">{dialogMessage}</DialogTitle>
+  <DialogContent style={{ textAlign: "center" }}>
+    <Button
+      onClick={() => {
+        setIsConfirmationDialogOpen(false);
+        confirmationAction?.();
+      }}
+      color="success"
+      variant="contained"
+      startIcon={<CheckCircleOutlineIcon />}
+      sx={{ mr: 1, mb: 1 }}
+    >
+      Confirm
+    </Button>
+    <Button
+      onClick={() => {
+        undoLastAction();
+        setIsConfirmationDialogOpen(false);
+      }}
+      color="error"
+      autoFocus
+      variant="contained"
+      startIcon={<UndoIcon />}
+      sx={{ mr: 1, mb: 1 }}
+    >
+      Undo
+    </Button>
+  </DialogContent>
+</Dialog>
+
+
+
             <Box>
                 {chosenPlayers.map((player) => (
                   <Card
@@ -150,7 +276,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
   variant="contained"
   size="small"
   startIcon={<AddCircleOutline sx={{ fontSize: 24, fontWeight: 'bold' }} />}
-  onClick={() => handleScore(player.name)}
+  onClick={() => addFigureAtFinish(player.name)}
 >
   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
     Score
@@ -169,7 +295,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
   variant="contained"
   size="small"
   startIcon={<CancelOutlined sx={{ fontSize: 24, fontWeight: 'bold' }} />}
-  onClick={() => handleBumped(player.name)}
+  onClick={() => incrementPlayerBumpedCount(player.name)}
 >
   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
     Bump
@@ -188,7 +314,7 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
   variant="contained"
   size="small"
   startIcon={<CasinoIcon sx={{ fontSize: 24, fontWeight: 'bold' }} />}
-  onClick={() => handleRoll6(player.name)}
+  onClick={() => incrementPlayerRollCount(player.name)}
 >
   <Typography variant="subtitle1" sx={{ fontWeight: 'bold' }}>
     Roll 6
@@ -196,26 +322,19 @@ export const Play: React.FC<PlayProps> = ({addGameResultFunction, setupInfo, add
 </Button>
 
                     <Divider sx={{ m: 1 }} />
-                    <Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
-  {playerRollCounts[player.name] ? playerRollCounts[player.name].score : 0} scores
-</Typography>
-<Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
-  {playerRollCounts[player.name] ? playerRollCounts[player.name].bumped : 0} bumped
-</Typography>
-<Typography variant="body2" component="p" sx={{ color: 'black', fontSize: '16px', fontWeight: 'bold', mb: 1 }}>
-  {playerRollCounts[player.name] ? playerRollCounts[player.name].roll6 : 0} rolled 6
-</Typography>
+                    <Typography variant="body1" sx={{ mt: 1 }}>Finish: {figuresAtFinish[player.name] || 0}</Typography>
+                <Typography variant="body1">Home or in play: {figuresAtHome[player.name] || 0} figures</Typography>
+                <Typography variant="body1">You been bumped {playerBumpedCounts[player.name] || 0} {playerBumpedCounts[player.name] === 1 ? 'time' : 'times'}</Typography>
 
+                <Typography variant="body1">You rolled SIX {playerRollCounts[player.name] || 0} {playerRollCounts[player.name] === 1 ? 'time' : 'times'}</Typography>
+               
                   </CardContent>
                 </Card>
                 
                  
                 ))}
             </Box>
-            
-            <Button onClick={endGame} sx={{margin: "1rem"}}>
-                <ArrowForward/>
-            </Button>
+
             
         </Box>
     );

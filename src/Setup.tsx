@@ -197,7 +197,7 @@ const handleColorClick = (color: string) => {
 <Button
   variant="contained"
   onClick={validateAddNewPlayer}
-  size="large"
+  size="small"
   disabled={disableAddButton}
   sx={{
     borderRadius: 8,
@@ -332,7 +332,7 @@ const handleColorClick = (color: string) => {
       ))}
 <Box sx={{ backgroundColor: '', mt: 1}}>
 
-  <Typography variant="h5" sx={{ marginBottom: 2, }}>Selected players:</Typography>
+  <Typography variant="h4" sx={{ marginBottom: 2, }}>Selected players:</Typography>
   {chosenPlayers
     .filter((x) => x.checked && x.color)
     .map((x) => (
@@ -369,7 +369,7 @@ const handleColorClick = (color: string) => {
   }}
 >
   Start Game
-</GradientStartButton>;
+</GradientStartButton>
   </Box>
 </Box>
 
