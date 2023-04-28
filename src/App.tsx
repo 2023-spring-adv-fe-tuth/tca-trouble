@@ -1,104 +1,137 @@
-import React, { useState } from 'react';
-import './App.css';
+import React, { useState } from "react";
+import "./App.css";
 
-import { Home } from './Home';
-import { Setup } from './Setup';
-import { Play } from './Play';
+import { Home } from "./Home";
+import { Setup } from "./Setup";
+import { Play } from "./Play";
 
-import {HashRouter, Routes, Route} from 'react-router-dom';
+import { HashRouter, Routes, Route } from "react-router-dom";
 
-import Box from '@mui/material/Box';
+import Box from "@mui/material/Box";
 
-import { GameResult, calculateLeaderboard, SetupInfo, getPreviousPlayers, getShortestGameDuration, getLongestGameDuration } from './front-end-model';
-import { ThemeProvider } from '@emotion/react';
-import { Typography, createTheme } from '@mui/material';
+import {
+  GameResult,
+  calculateLeaderboard,
+  SetupInfo,
+  getPreviousPlayers,
+  getShortestGameDuration,
+  getLongestGameDuration,
+} from "./front-end-model";
+import { ThemeProvider } from "@emotion/react";
+import { Typography, createTheme } from "@mui/material";
 
 const hardcodedGameResults: GameResult[] = [
-        {
-          winner: "Hristijan", players: ["Hristijan", "Eric"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        },
-        {
-          winner: "Phil", players: ["Phil", "Taylor"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        },
-        {
-          winner: "Taylor" , players: ["Phil", "Taylor", "Jack"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        },
-        {
-          winner: "Robbie" , players: ["Robbie", "Joe"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        },
-        {
-          winner: "Stefanie", players: ["Stefanie", "Ezekiel"], start: "2023-04-05T00:03:23.912Z", end: "2023-04-05T00:03:33.912Z"
-        },
-  ];
+  {
+    winner: "Hristijan",
+    players: ["Hristijan", "Eric"],
+    start: "2023-04-05T00:03:23.912Z",
+    end: "2023-04-05T00:03:33.912Z",
+  },
+  {
+    winner: "Phil",
+    players: ["Phil", "Taylor"],
+    start: "2023-04-05T00:03:23.912Z",
+    end: "2023-04-05T00:03:33.912Z",
+  },
+  {
+    winner: "Taylor",
+    players: ["Phil", "Taylor", "Jack"],
+    start: "2023-04-05T00:03:23.912Z",
+    end: "2023-04-05T00:03:33.912Z",
+  },
+  {
+    winner: "Robbie",
+    players: ["Robbie", "Joe"],
+    start: "2023-04-05T00:03:23.912Z",
+    end: "2023-04-05T00:03:33.912Z",
+  },
+  {
+    winner: "Stefanie",
+    players: ["Stefanie", "Ezekiel"],
+    start: "2023-04-05T00:03:23.912Z",
+    end: "2023-04-05T00:03:33.912Z",
+  },
+];
 
 const App = () => {
-
   const [results, setGameResults] = useState(hardcodedGameResults);
-  
-  const [setupInfo, setSetupInfo] = useState <SetupInfo>({start: "", chosenPlayers: []});
-  const [playerRollCounts, setPlayerRollCounts] = useState<{ [playerName: string]: number }>({});
 
+  const [setupInfo, setSetupInfo] = useState<SetupInfo>({
+    start: "",
+    chosenPlayers: [],
+  });
+  const [playerRollCounts, setPlayerRollCounts] = useState<{
+    [playerName: string]: number;
+  }>({});
 
-
-  const addPlayerRollCounts = (newPlayerRollCounts: { [playerName: string]: number }) => {
-    setPlayerRollCounts(prevState => ({ ...prevState, ...newPlayerRollCounts }));
+  const addPlayerRollCounts = (newPlayerRollCounts: {
+    [playerName: string]: number;
+  }) => {
+    setPlayerRollCounts((prevState) => ({
+      ...prevState,
+      ...newPlayerRollCounts,
+    }));
   };
 
-  const addGameResult = (r: GameResult) => {setGameResults([...results, r]);};
+  const addGameResult = (r: GameResult) => {
+    setGameResults([...results, r]);
+  };
   const theme = createTheme({
     typography: {
-        fontSize: 16,
-     
-      fontFamily: [
-        'quicksand',
-        'sans-serif',
-      ].join(','),
-    },});
-  return (
-    <ThemeProvider theme={theme}>
-    <Box m={1} p={2}>
-      
-    <Typography variant="h4" sx={{m: 1}}>Tca Trouble</Typography>
-    <Typography variant="h5" sx={{m: 1}}>Companion App</Typography>
+      fontSize: 16,
 
- 
-              <HashRouter>
-                <Routes>
-                    <Route 
-                      path="/" 
-                      element={<Home 
-                          leaderboardData={calculateLeaderboard(results)}
-                          shortestGameDuration={getShortestGameDuration(results)}
-                          longestGameDuration={getLongestGameDuration(results)}
-                          playerRollCounts={playerRollCounts}
-                          
-                        />} 
-                    />
-                    
-                    <Route 
-                      path="/setup" 
-                      element={<Setup 
-                        
-                          previousPlayers={getPreviousPlayers(results)}
-                          setSetupInfo={setSetupInfo}
-                        />} 
-                    />
-                    <Route 
-                      path="/play" 
-                      element={<Play 
-                          addGameResultFunction={addGameResult}
-                          setupInfo={setupInfo}
-                          addPlayerRollCountsFunction={addPlayerRollCounts}
-                          chosenPlayers={setupInfo.chosenPlayers}
-                          
-                        />} 
-                    />
-                </Routes>
-              </HashRouter>
- 
+      fontFamily: ["quicksand", "sans-serif"].join(","),
+    },
+  });
+  return (
+    <Box m={1} p={2}>
+      <ThemeProvider theme={theme}>
+        <Typography variant="h4" sx={{ m: 1 }}>
+          Tca Trouble
+        </Typography>
+        <Typography variant="h5" sx={{ m: 1 }}>
+          Companion App
+        </Typography>
+
+        <HashRouter>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <Home
+                  leaderboardData={calculateLeaderboard(results)}
+                  shortestGameDuration={getShortestGameDuration(results)}
+                  longestGameDuration={getLongestGameDuration(results)}
+                  playerRollCounts={playerRollCounts}
+                />
+              }
+            />
+
+            <Route
+              path="/setup"
+              element={
+                <Setup
+                  previousPlayers={getPreviousPlayers(results)}
+                  setSetupInfo={setSetupInfo}
+                />
+              }
+            />
+            <Route
+              path="/play"
+              element={
+                <Play
+                  addGameResultFunction={addGameResult}
+                  setupInfo={setupInfo}
+                  addPlayerRollCountsFunction={addPlayerRollCounts}
+                  chosenPlayers={setupInfo.chosenPlayers}
+                />
+              }
+            />
+          </Routes>
+        </HashRouter>
+      </ThemeProvider>
     </Box>
-    </ThemeProvider>
   );
-}
+};
 
 export default App;
