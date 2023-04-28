@@ -30,12 +30,9 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
     backgroundColor: theme.palette.common.black,
     color: theme.palette.common.white,
     fontWeight: "bold",
-   
-   
   },
   [`&.${tableCellClasses.body}`]: {
     fontSize: 14,
-    
   },
 }));
 
@@ -97,6 +94,22 @@ export const Home: React.FC<HomeProps> = ({
     Play
   </Typography>
 </Button>
+      <Button
+        variant="contained"
+        size="large"
+        onClick={() => nav("/setup")}
+        sx={{
+          width: "100%",
+          m: 2,
+          borderRadius: "20px",
+          bgcolor: "#6C63FF",
+          "&:hover": {
+            bgcolor: "#5A52CC",
+          },
+        }}
+      >
+        Play
+      </Button>
       <Card
         sx={{
           width: "100%",
@@ -154,7 +167,7 @@ export const Home: React.FC<HomeProps> = ({
           m: 2,
         }}
       >
-        <CardContent>
+        <CardContent sx={{ m: 2 }}>
           <Typography variant="h3" component="div">
             Game Stats
           </Typography>
@@ -168,48 +181,49 @@ export const Home: React.FC<HomeProps> = ({
       </Card>
 
       <Card
-  sx={{
-    width: "100%",
-    m: 2,
-  }}
->
-  <CardContent>
-    <Typography variant="h3" component="div">
-      Who rolled 6 the most?
-    </Typography>
-    {Object.keys(playerRollCounts).length > 0 ? (
-      <TableContainer component={Paper}>
-        <Table aria-label="customized table">
-          <TableHead>
-            <TableRow>
-              <StyledTableCell>Name</StyledTableCell>
-              <StyledTableCell align="left">Who rolled 6 the most?</StyledTableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.keys(playerRollCounts)
-              .sort((a, b) => playerRollCounts[b] - playerRollCounts[a])
-              .map((x) => (
-                <StyledTableRow key={x}>
-                  <StyledTableCell component="th" scope="row">
-                    {x}
-                  </StyledTableCell>
-                  <StyledTableCell align="left">
-                    {playerRollCounts[x]}
-                  </StyledTableCell>
-                </StyledTableRow>
-              ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-    ) : (
-      <Typography variant="body1" component="div">
-        No stats available. Play a game to see your stats!
-      </Typography>
-    )}
-  </CardContent>
-</Card>
-
+        sx={{
+          width: "100%",
+          m: 2,
+        }}
+      >
+        <CardContent>
+          <Typography variant="h3" component="div">
+            Who rolled 6 the most?
+          </Typography>
+          {Object.keys(playerRollCounts).length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell align="left">
+                      Number of 6 rolled
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(playerRollCounts)
+                    .sort((a, b) => playerRollCounts[b] - playerRollCounts[a])
+                    .map((x) => (
+                      <StyledTableRow key={x}>
+                        <StyledTableCell component="th" scope="row">
+                          {x}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {playerRollCounts[x]}
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body1" component="div">
+              No stats available. Play a game to see your stats!
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
     </>
   );
 };
