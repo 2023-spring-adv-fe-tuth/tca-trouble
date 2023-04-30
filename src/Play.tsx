@@ -30,9 +30,13 @@ import HourglassEmptyIcon from "@mui/icons-material/HourglassEmpty";
 interface PlayProps {
   addGameResultFunction: (r: GameResult) => void;
   setupInfo: SetupInfo;
-  addPlayerRollCountsFunction: (playerRollCounts: {
+  addPlayerRollCounts: (playerRollCounts: {
     [playerName: string]: number;
   }) => void;
+  addPlayerBumpedCounts: (playerBumpedCounts: {
+    [playerName: string]: number;
+  }) => void;
+
   chosenPlayers: { name: string; color: string }[];
 }
 
@@ -40,7 +44,8 @@ export const Play: React.FC<PlayProps> = ({
   addGameResultFunction,
   setupInfo,
   chosenPlayers,
-  addPlayerRollCountsFunction,
+  addPlayerRollCounts,
+  addPlayerBumpedCounts,
 }) => {
   const nav = useNavigate();
   const [elapsedTime, setElapsedTime] = useState(0);
@@ -227,8 +232,11 @@ export const Play: React.FC<PlayProps> = ({
   };
 
   useEffect(() => {
-    addPlayerRollCountsFunction(playerRollCounts);
-  }, [playerRollCounts, addPlayerRollCountsFunction]);
+    addPlayerRollCounts(playerRollCounts);
+  }, [playerRollCounts, addPlayerRollCounts]);
+  useEffect(() => {
+    addPlayerBumpedCounts(playerBumpedCounts);
+  }, [playerBumpedCounts, addPlayerBumpedCounts]);
 
   return (
     <Box>

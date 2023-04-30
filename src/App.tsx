@@ -64,12 +64,25 @@ const App = () => {
     [playerName: string]: number;
   }>({});
 
-  const addPlayerRollCounts = (newPlayerRollCounts: {
+  const [playerBumpedCounts, setPlayerBumpedCounts] = useState<{
+    [playerName: string]: number;
+  }>({});
+
+  const addPlayerRollCounts = (playerRollCounts: {
     [playerName: string]: number;
   }) => {
     setPlayerRollCounts((prevState) => ({
       ...prevState,
-      ...newPlayerRollCounts,
+      ...playerRollCounts,
+    }));
+  };
+
+  const addPlayerBumpedCounts = (playerBumpedCounts: {
+    [playerName: string]: number;
+  }) => {
+    setPlayerBumpedCounts((prevState) => ({
+      ...prevState,
+      ...playerBumpedCounts,
     }));
   };
 
@@ -103,6 +116,7 @@ const App = () => {
                   shortestGameDuration={getShortestGameDuration(results)}
                   longestGameDuration={getLongestGameDuration(results)}
                   playerRollCounts={playerRollCounts}
+                  playerBumpedCounts={playerBumpedCounts}
                 />
               }
             />
@@ -122,7 +136,8 @@ const App = () => {
                 <Play
                   addGameResultFunction={addGameResult}
                   setupInfo={setupInfo}
-                  addPlayerRollCountsFunction={addPlayerRollCounts}
+                  addPlayerRollCounts={addPlayerRollCounts}
+                  addPlayerBumpedCounts={addPlayerBumpedCounts}
                   chosenPlayers={setupInfo.chosenPlayers}
                 />
               }

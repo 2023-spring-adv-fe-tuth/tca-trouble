@@ -23,6 +23,7 @@ interface HomeProps {
   shortestGameDuration: number;
   longestGameDuration: number;
   playerRollCounts: { [playerName: string]: number };
+  playerBumpedCounts: { [playerName: string]: number };
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -66,6 +67,7 @@ export const Home: React.FC<HomeProps> = ({
   shortestGameDuration,
   longestGameDuration,
   playerRollCounts,
+  playerBumpedCounts,
 }) => {
   console.log(leaderboardData);
 
@@ -94,22 +96,7 @@ export const Home: React.FC<HomeProps> = ({
     Play
   </Typography>
 </Button>
-      <Button
-        variant="contained"
-        size="large"
-        onClick={() => nav("/setup")}
-        sx={{
-          width: "100%",
-          m: 2,
-          borderRadius: "20px",
-          bgcolor: "#6C63FF",
-          "&:hover": {
-            bgcolor: "#5A52CC",
-          },
-        }}
-      >
-        Play
-      </Button>
+
       <Card
         sx={{
           width: "100%",
@@ -165,6 +152,7 @@ export const Home: React.FC<HomeProps> = ({
         sx={{
           width: "100%",
           m: 2,
+          
         }}
       >
         <CardContent sx={{ m: 2 }}>
@@ -187,7 +175,7 @@ export const Home: React.FC<HomeProps> = ({
         }}
       >
         <CardContent>
-          <Typography variant="h3" component="div">
+          <Typography variant="h4" component="div">
             Who rolled 6 the most?
           </Typography>
           {Object.keys(playerRollCounts).length > 0 ? (
@@ -211,6 +199,51 @@ export const Home: React.FC<HomeProps> = ({
                         </StyledTableCell>
                         <StyledTableCell align="left">
                           {playerRollCounts[x]}
+                        </StyledTableCell>
+                      </StyledTableRow>
+                    ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          ) : (
+            <Typography variant="body1" component="div">
+              No stats available. Play a game to see your stats!
+            </Typography>
+          )}
+        </CardContent>
+      </Card>
+
+      <Card
+        sx={{
+          width: "100%",
+          m: 2,
+        }}
+      >
+        <CardContent>
+          <Typography variant="h4" component="div">
+            Who been bumped the most?
+          </Typography>
+          {Object.keys(playerBumpedCounts).length > 0 ? (
+            <TableContainer component={Paper}>
+              <Table aria-label="customized table">
+                <TableHead>
+                  <TableRow>
+                    <StyledTableCell>Name</StyledTableCell>
+                    <StyledTableCell align="left">
+                      Number of times bumped
+                    </StyledTableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {Object.keys(playerBumpedCounts)
+                    .sort((a, b) => playerBumpedCounts[b] - playerBumpedCounts[a])
+                    .map((x) => (
+                      <StyledTableRow key={x}>
+                        <StyledTableCell component="th" scope="row">
+                          {x}
+                        </StyledTableCell>
+                        <StyledTableCell align="left">
+                          {playerBumpedCounts[x]}
                         </StyledTableCell>
                       </StyledTableRow>
                     ))}
