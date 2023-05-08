@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import "./App.css";
 
 import { Home } from "./Home";
@@ -18,7 +18,9 @@ import {
   getLongestGameDuration,
 } from "./front-end-model";
 import { ThemeProvider } from "@emotion/react";
-import { Typography, createTheme } from "@mui/material";
+import { Typography, createTheme, Button, TextField } from "@mui/material";
+
+import localforage from "localforage";
 
 const hardcodedGameResults: GameResult[] = [
   {
@@ -89,6 +91,39 @@ const App = () => {
   const addGameResult = (r: GameResult) => {
     setGameResults([...results, r]);
   };
+
+  const [emailKey, setEmailKey] = useState("");
+
+  useEffect (
+    () => {
+
+      const loadEmailKey = async () => {
+
+        try {
+          setEmailKey(
+            await localforage.getItem("emailKey") ?? ""
+          );
+        }
+        catch (err) {console.error(err)};
+
+      };
+      loadEmailKey();
+
+    }, []
+  )
+
+  const saveEmailKey = async () => {
+    try {
+      await localforage.setItem(
+        "emailKey", emailKey
+
+      );
+    }
+    catch (err) {
+      console.error(err);
+    }
+   };
+
   const theme = createTheme({
     typography: {
       fontSize: 16,
@@ -105,7 +140,36 @@ const App = () => {
         <Typography variant="h5" sx={{ m: 1 }}>
           Companion App
         </Typography>
+        
+        <TextField
+          id="input-with-sx"
+          label="Enter your mail"
+          variant="standard"
+          value={emailKey}
+          onChange={(e) => setEmailKey(e.target.value)}
+        />
 
+        <Button
+          variant="contained"
+          onClick={saveEmailKey}
+          size="small"
+          
+          sx={{
+            borderRadius: 8,
+            py: 1.5,
+            px: 3,
+            fontWeight: "bold",
+            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+            color: "white",
+            backgroundColor: "primary.main",
+            "&:hover": {
+              backgroundColor: "primary.dark",
+            },
+          }}
+        >
+          Save Mail
+        </Button>
+        
         <HashRouter>
           <Routes>
             <Route

@@ -2,7 +2,6 @@
   "name": "tca-trouble",
   "version": "0.1.0",
   "private": true,
-  
   "homepage": "https://2023-spring-adv-fe-tuth.github.io/tca-trouble",
   "dependencies": {
     "@aws-sdk/util-dynamodb": "^3.316.0",
@@ -19,6 +18,7 @@
     "@types/react": "^18.0.28",
     "@types/react-dom": "^18.0.11",
     "human-readable": "^0.2.1",
+    "localforage": "^1.10.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.8.2",

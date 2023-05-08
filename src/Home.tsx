@@ -18,6 +18,10 @@ import Paper from "@mui/material/Paper";
 import PlayCircleOutlineIcon from "@mui/icons-material/PlayCircleOutline";  
 import { durationFormatter } from "human-readable";
 
+import TextField from '@mui/material/TextField';
+import { useState } from "react";
+
+
 interface HomeProps {
   leaderboardData: LeaderboardPlayer[];
   shortestGameDuration: number;
@@ -75,8 +79,12 @@ export const Home: React.FC<HomeProps> = ({
 
   const format = durationFormatter();
 
+  
+
   return (
     <>
+
+
 <Button
   variant="contained"
   size="large"
@@ -122,14 +130,20 @@ export const Home: React.FC<HomeProps> = ({
                 Leaderboard
               </Typography>
               <Table aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Name</StyledTableCell>
-                    <StyledTableCell align="left">W</StyledTableCell>
-                    <StyledTableCell align="left">L</StyledTableCell>
-                    <StyledTableCell align="left">AVG</StyledTableCell>
-                  </TableRow>
-                </TableHead>
+              <TableHead sx={{ background: "linear-gradient(to right, #00B4DB, #0083B0)" }}>
+  <TableRow>
+    <StyledTableCell sx={{ color: "#fff" }}>Name</StyledTableCell>
+    <StyledTableCell align="left" sx={{ color: "#fff" }}>
+      W
+    </StyledTableCell>
+    <StyledTableCell align="left" sx={{ color: "#fff" }}>
+      L
+    </StyledTableCell>
+    <StyledTableCell align="left" sx={{ color: "#fff" }}>
+      AVG
+    </StyledTableCell>
+  </TableRow>
+</TableHead>
                 <TableBody>
                   {leaderboardData.map((x) => (
                     <StyledTableRow key={x.name}>
