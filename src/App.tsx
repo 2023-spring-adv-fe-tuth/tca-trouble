@@ -22,6 +22,9 @@ import { Typography, createTheme, Button, TextField, styled } from "@mui/materia
 
 import localforage from "localforage";
 
+import { saveGameToCloud, loadGamesFromCloud } from "./tca-cloud-api";
+
+
 
 const App = () => {
   const [results, setGameResults] = useState<GameResult[]>([]);
@@ -57,10 +60,21 @@ const App = () => {
   };
 
   const addGameResult = (r: GameResult) => {
+
+    // Save to cloud
+    saveGameToCloud(
+      emailKeySaved,
+      "tca-trouble",
+      r.end,
+      r
+      );
+
+
     setGameResults([...results, r]);
   };
 
-  const [emailKey, setEmailKey] = useState("");
+  const [emailKeyInput, setEmailKeyInput] = useState("");
+  const [emailKeySaved, setEmailKeySaved] = useState("");
 
   useEffect (
     () => {
@@ -68,9 +82,9 @@ const App = () => {
       const loadEmailKey = async () => {
 
         try {
-          setEmailKey(
-            await localforage.getItem("emailKey") ?? ""
-          );
+          const ek = String (await localforage.getItem("emailKey")) ?? ""; 
+          setEmailKeyInput(ek);
+          setEmailKeySaved(ek);
         }
         catch (err) {console.error(err)};
 
@@ -83,9 +97,11 @@ const App = () => {
   const saveEmailKey = async () => {
     try {
       await localforage.setItem(
-        "emailKey", emailKey
+        "emailKey", emailKeyInput
 
       );
+
+      setEmailKeySaved(emailKeyInput);
     }
     catch (err) {
       console.error(err);
@@ -141,8 +157,8 @@ const Heading = styled(Typography)({
           id="input-with-sx"
           label="Enter your mail"
           variant="standard"
-          value={emailKey}
-          onChange={(e) => setEmailKey(e.target.value)}
+          value={emailKeyInput}
+          onChange={(e) => setEmailKeyInput(e.target.value)}
         />
 
         <Button
