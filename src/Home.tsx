@@ -92,7 +92,8 @@ export const Home: React.FC<HomeProps> = ({
   startIcon={<PlayCircleOutlineIcon />}
   sx={{
     width: "100%",
-    m: 2,
+    mt: 2,
+    mb: 2,
     borderRadius: "20px",
     bgcolor: "#6C63FF",
     '&:hover': {
@@ -108,7 +109,8 @@ export const Home: React.FC<HomeProps> = ({
       <Card
         sx={{
           width: "100%",
-          m: 2,
+          mt: 2,
+          mb: 2,
         }}
       >
         <CardContent>
@@ -123,9 +125,7 @@ export const Home: React.FC<HomeProps> = ({
               <Typography
                 variant="h4"
                 component="div"
-                sx={{
-                  m: 2,
-                }}
+                
               >
                 Leaderboard
               </Typography>
@@ -165,19 +165,20 @@ export const Home: React.FC<HomeProps> = ({
       <Card
         sx={{
           width: "100%",
-          m: 2,
+          mt: 2,
+    mb: 2,
           
         }}
       >
-        <CardContent sx={{ m: 2 }}>
-          <Typography variant="h3" component="div">
+        <CardContent>
+          <Typography variant="h3">
             Game Stats
           </Typography>
           <Typography variant="h6">
-            Shortest Game: {`${format(shortestGameDuration)}`}
+            {`Shortest game: ${Number.isInteger (shortestGameDuration) ? format(shortestGameDuration) : "N/A"}`}
           </Typography>
           <Typography variant="h6">
-            Longest Game: {`${format(longestGameDuration)}`}
+          {`Longest game: ${Number.isInteger (longestGameDuration) ? format(longestGameDuration) : "N/A"}`}
           </Typography>
         </CardContent>
       </Card>
@@ -185,7 +186,8 @@ export const Home: React.FC<HomeProps> = ({
       <Card
         sx={{
           width: "100%",
-          m: 2,
+          mt: 2,
+    mb: 2,
         }}
       >
         <CardContent>
@@ -230,7 +232,7 @@ export const Home: React.FC<HomeProps> = ({
       <Card
         sx={{
           width: "100%",
-          m: 2,
+          
         }}
       >
         <CardContent>

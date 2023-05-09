@@ -18,45 +18,13 @@ import {
   getLongestGameDuration,
 } from "./front-end-model";
 import { ThemeProvider } from "@emotion/react";
-import { Typography, createTheme, Button, TextField } from "@mui/material";
+import { Typography, createTheme, Button, TextField, styled } from "@mui/material";
 
 import localforage from "localforage";
 
-const hardcodedGameResults: GameResult[] = [
-  {
-    winner: "Hristijan",
-    players: ["Hristijan", "Eric"],
-    start: "2023-04-05T00:03:23.912Z",
-    end: "2023-04-05T00:03:33.912Z",
-  },
-  {
-    winner: "Phil",
-    players: ["Phil", "Taylor"],
-    start: "2023-04-05T00:03:23.912Z",
-    end: "2023-04-05T00:03:33.912Z",
-  },
-  {
-    winner: "Taylor",
-    players: ["Phil", "Taylor", "Jack"],
-    start: "2023-04-05T00:03:23.912Z",
-    end: "2023-04-05T00:03:33.912Z",
-  },
-  {
-    winner: "Robbie",
-    players: ["Robbie", "Joe"],
-    start: "2023-04-05T00:03:23.912Z",
-    end: "2023-04-05T00:03:33.912Z",
-  },
-  {
-    winner: "Stefanie",
-    players: ["Stefanie", "Ezekiel"],
-    start: "2023-04-05T00:03:23.912Z",
-    end: "2023-04-05T00:03:33.912Z",
-  },
-];
 
 const App = () => {
-  const [results, setGameResults] = useState(hardcodedGameResults);
+  const [results, setGameResults] = useState<GameResult[]>([]);
 
   const [setupInfo, setSetupInfo] = useState<SetupInfo>({
     start: "",
@@ -131,15 +99,43 @@ const App = () => {
       fontFamily: ["quicksand", "sans-serif"].join(","),
     },
   });
+  const primaryColor = "#0c1b28";
+const secondaryColor = "#ffbb54";
+
+// Define styled components
+const AppContainer = styled(Box)({
+  display: "flex",
+  flexDirection: "column",
+ 
+  backgroundColor: primaryColor,
+  padding: "1rem",
+ 
+  boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
+  borderRadius: "16px",
+});
+
+const Logo = styled(Typography)({
+  fontWeight: "bold",
+  color: secondaryColor,
+  marginBottom: "1rem",
+});
+
+const Heading = styled(Typography)({
+  fontWeight: "bold",
+  marginBottom: "0.5rem",
+  color: "white",
+});
+
   return (
     <Box m={1} p={2}>
       <ThemeProvider theme={theme}>
-        <Typography variant="h4" sx={{ m: 1 }}>
-          Tca Trouble
-        </Typography>
-        <Typography variant="h5" sx={{ m: 1 }}>
-          Companion App
-        </Typography>
+      <Box sx={{ mb: 1 }}>
+      <AppContainer sx={{justifyContent: 'center', alignItems: 'center'}}>
+        <Logo variant="h3">Tca Trouble</Logo>
+        <Heading variant="h4">Companion app</Heading>
+        
+      </AppContainer>
+    </Box>
         
         <TextField
           id="input-with-sx"

@@ -4,7 +4,7 @@
   "private": true,
   "homepage": "https://2023-spring-adv-fe-tuth.github.io/tca-trouble",
   "dependencies": {
-    "@aws-sdk/util-dynamodb": "^3.316.0",
+    "@aws-sdk/util-dynamodb": "^3.329.0",
     "@emotion/react": "^11.10.6",
     "@emotion/styled": "^11.10.6",
     "@fontsource/roboto": "^4.5.8",
