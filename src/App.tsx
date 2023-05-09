@@ -59,10 +59,10 @@ const App = () => {
     }));
   };
 
-  const addGameResult = (r: GameResult) => {
+  const addGameResult = async (r: GameResult) => {
 
     // Save to cloud
-    saveGameToCloud(
+    await saveGameToCloud(
       emailKeySaved,
       "tca-trouble",
       r.end,
@@ -79,19 +79,40 @@ const App = () => {
   useEffect (
     () => {
 
-      const loadEmailKey = async () => {
+      const loadEmailKeyAndGameResults = async () => {
 
         try {
           const ek = String (await localforage.getItem("emailKey")) ?? ""; 
+
+          if (ek.length > 0) {
+            const resultsFromCloud =  await loadGamesFromCloud(
+              ek,
+              "tca-trouble"
+            );
+
+            if (!ignore) {
+              setGameResults(resultsFromCloud);
+            }
+          }
+
+
+
+          if (!ignore) {
           setEmailKeyInput(ek);
           setEmailKeySaved(ek);
+          }
         }
         catch (err) {console.error(err)};
 
       };
-      loadEmailKey();
 
-    }, []
+      let ignore = false;
+      loadEmailKeyAndGameResults();
+      return () => {
+        ignore = true;
+      };
+
+    }, [emailKeySaved]
   )
 
   const saveEmailKey = async () => {

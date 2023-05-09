@@ -4,7 +4,6 @@ export interface GameResult {
     
     start: string;
     end: string;
-
 };
 
 export interface LeaderboardPlayer {

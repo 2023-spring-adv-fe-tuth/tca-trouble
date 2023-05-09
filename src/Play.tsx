@@ -87,6 +87,7 @@ export const Play: React.FC<PlayProps> = ({
         players: chosenPlayers.map((player) => player.name),
         start: setupInfo.start,
         end: new Date().toISOString(),
+        
       };
       addGameResultFunction(newGameResult);
       endGame();
