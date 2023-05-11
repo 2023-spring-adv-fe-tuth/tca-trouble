@@ -20,7 +20,7 @@ import { durationFormatter } from "human-readable";
 
 import TextField from '@mui/material/TextField';
 import { useState } from "react";
-
+import { loadGamesFromCloud } from "./tca-cloud-api";
 
 interface HomeProps {
   leaderboardData: LeaderboardPlayer[];
@@ -73,7 +73,20 @@ export const Home: React.FC<HomeProps> = ({
   playerRollCounts,
   playerBumpedCounts,
 }) => {
-  console.log(leaderboardData);
+  
+  const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
+  const countsTotal: Record<string, number> = {};
+
+  playerCounts.forEach((counts) => {
+    if (typeof counts === 'object' && counts !== null) {
+      Object.entries(counts).forEach(([player, count]) => {
+        countsTotal[player] = (countsTotal[player] || 0) + count;
+      });
+    }
+  });
+
+  return countsTotal;
+};
 
   const nav = useNavigate();
 

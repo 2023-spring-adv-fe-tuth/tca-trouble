@@ -4,6 +4,9 @@ export interface GameResult {
     
     start: string;
     end: string;
+    
+    playerRollCounts: Record<string, number>;
+    playerBumpedCounts: Record<string, number>;
 };
 
 export interface LeaderboardPlayer {

@@ -58,6 +58,7 @@ export const saveGameToCloud = async (email, appName, timestamp, gameResult) => 
     console.log("Unarshalled Response", unmarshalledData);
 
     const gameResults = unmarshalledData.map(x => x.game);
+    console.log("Game Results", gameResults);
     return gameResults;    
   };
   

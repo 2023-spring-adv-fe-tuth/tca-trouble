@@ -60,9 +60,7 @@ export const Play: React.FC<PlayProps> = ({
 
     return () => clearInterval(intervalId);
   }, []);
-  const endGame = () => {
-    nav(-2);
-  };
+  
 
   const [open, setOpen] = useState(false);
   const [winner, setWinner] = useState("");
@@ -80,19 +78,17 @@ export const Play: React.FC<PlayProps> = ({
     setOpen(false);
   };
 
-  useEffect(() => {
-    if (winner !== "") {
-      const newGameResult: GameResult = {
-        winner: winner,
-        players: chosenPlayers.map((player) => player.name),
-        start: setupInfo.start,
-        end: new Date().toISOString(),
-        
-      };
-      addGameResultFunction(newGameResult);
-      endGame();
-    }
-  }, [winner]);
+ const endGame = (winner: string) => {
+    addGameResultFunction({
+      winner: winner,
+      players: chosenPlayers.map((player) => player.name),
+      start: setupInfo.start,
+      end: new Date().toISOString(),
+      playerBumpedCounts: playerBumpedCounts,
+      playerRollCounts: playerRollCounts,
+    })
+    nav(-2)
+  };
 
   const [dialogOpen, setDialogOpen] = useState(false);
   const [dialogMessage, setDialogMessage] = useState("");
@@ -268,7 +264,7 @@ export const Play: React.FC<PlayProps> = ({
             {chosenPlayers.map((player) => (
               <Button
                 key={player.name}
-                onClick={() => handleWinner(player.name)}
+                onClick={() => endGame(player.name)}
                 sx={{ margin: "1rem" }}
               >
                 {player.name}

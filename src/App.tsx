@@ -96,7 +96,7 @@ const App = () => {
           }
 
 
-
+          
           if (!ignore) {
           setEmailKeyInput(ek);
           setEmailKeySaved(ek);
@@ -105,7 +105,7 @@ const App = () => {
         catch (err) {console.error(err)};
 
       };
-
+      
       let ignore = false;
       loadEmailKeyAndGameResults();
       return () => {
@@ -138,6 +138,20 @@ const App = () => {
   });
   const primaryColor = "#0c1b28";
 const secondaryColor = "#ffbb54";
+const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
+  const countsTotal: Record<string, number> = {};
+
+  playerCounts.forEach((counts) => {
+    if (typeof counts === 'object' && counts !== null) {
+      Object.entries(counts).forEach(([player, count]) => {
+        countsTotal[player] = (countsTotal[player] || 0) + count;
+      });
+    }
+  });
+
+  return countsTotal;
+};
+
 
 // Define styled components
 const AppContainer = styled(Box)({
@@ -162,6 +176,8 @@ const Heading = styled(Typography)({
   marginBottom: "0.5rem",
   color: "white",
 });
+
+
 
   return (
     <Box m={1} p={2}>
@@ -202,6 +218,20 @@ const Heading = styled(Typography)({
         >
           Save Mail
         </Button>
+
+        <p>
+  Player Bumped Counts:
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
+
+<p>
+  Player Roll Counts:
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
         
         <HashRouter>
           <Routes>
