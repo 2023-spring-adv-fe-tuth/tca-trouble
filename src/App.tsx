@@ -219,19 +219,7 @@ const Heading = styled(Typography)({
           Save Mail
         </Button>
 
-        <p>
-  Player Bumped Counts:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
-
-<p>
-  Player Roll Counts:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
+     
         
         <HashRouter>
           <Routes>
