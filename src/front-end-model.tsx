@@ -37,9 +37,9 @@ export const getPreviousPlayers: GetPreviousPlayersFunc = (grs) => {
 export const calculateLeaderboard: CalculateLeaderboardFunc = (results) => {
 
     const gameResultsGroupedByPlayer = getPreviousPlayers(results).reduce(
-        (acc, x) => acc.set(x, results.filter(y => y.players.includes(x)))
-        , new Map<string, GameResult[]>() 
-    );
+        (acc, x) => acc.set(x, results.filter(y => y.players && y.players.includes(x))), // Add a null check for y.players
+        new Map<string, GameResult[]>()
+      );
 
     return [...gameResultsGroupedByPlayer]
 

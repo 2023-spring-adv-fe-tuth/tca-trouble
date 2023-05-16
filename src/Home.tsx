@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
-import { GameResult, LeaderboardPlayer } from "./front-end-model";
+import { LeaderboardPlayer } from "./front-end-model";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -20,9 +20,8 @@ import { durationFormatter } from "human-readable";
 
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from "react";
-import { loadGamesFromCloud } from "./tca-cloud-api";
-import localforage from "localforage";
 
+import { App } from "./App";
 interface HomeProps {
   leaderboardData: LeaderboardPlayer[];
   shortestGameDuration: number;
@@ -73,67 +72,15 @@ export const Home: React.FC<HomeProps> = ({
   longestGameDuration,
   playerRollCounts,
   playerBumpedCounts,
+  
 }) => {
   
-  const [results, setGameResults] = useState<GameResult[]>([]);
 
   const nav = useNavigate();
 
   const format = durationFormatter();
 
-  const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
-    const countsTotal: Record<string, number> = {};
   
-    playerCounts.forEach((counts) => {
-      if (typeof counts === 'object' && counts !== null) {
-        Object.entries(counts).forEach(([player, count]) => {
-          countsTotal[player] = (countsTotal[player] || 0) + count;
-        });
-      }
-    });
-  
-    return countsTotal;
-  };
-  const [emailKeyInput, setEmailKeyInput] = useState("");
-  const [emailKeySaved, setEmailKeySaved] = useState("");
-  useEffect (
-    () => {
-
-      const loadEmailKeyAndGameResults = async () => {
-
-        try {
-          const ek = String (await localforage.getItem("emailKey")) ?? ""; 
-
-          if (ek.length > 0) {
-            const resultsFromCloud =  await loadGamesFromCloud(
-              ek,
-              "tca-trouble"
-            );
-
-            if (!ignore) {
-              setGameResults(resultsFromCloud);
-            }
-          }
-
-
-          
-          if (!ignore) {
-          setEmailKeyInput(ek);
-          setEmailKeySaved(ek);
-          }
-        }
-        catch (err) {console.error(err)};
-
-      };
-      
-      let ignore = false;
-      loadEmailKeyAndGameResults();
-      return () => {
-        ignore = true;
-      };
-
-    }, [emailKeySaved]
-  )
 
   return (
     <>
@@ -159,6 +106,9 @@ export const Home: React.FC<HomeProps> = ({
     Play
   </Typography>
 </Button>
+<Typography variant="h4" component="div">
+  Total Counts
+</Typography>
 
       <Card
         sx={{
@@ -282,19 +232,7 @@ export const Home: React.FC<HomeProps> = ({
           )}
         </CardContent>
       </Card>
-      <p>
-  Player Bumped Counts:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
 
-<p>
-  Player Roll Counts:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
       <Card
         sx={{
           width: "100%",

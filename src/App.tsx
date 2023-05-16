@@ -26,7 +26,7 @@ import { saveGameToCloud, loadGamesFromCloud } from "./tca-cloud-api";
 
 
 
-const App = () => {
+export const App = () => {
   const [results, setGameResults] = useState<GameResult[]>([]);
 
   const [setupInfo, setSetupInfo] = useState<SetupInfo>({
@@ -129,16 +129,7 @@ const App = () => {
     }
    };
 
-  const theme = createTheme({
-    typography: {
-      fontSize: 16,
-
-      fontFamily: ["quicksand", "sans-serif"].join(","),
-    },
-  });
-  const primaryColor = "#0c1b28";
-const secondaryColor = "#ffbb54";
-const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
+   const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
   const countsTotal: Record<string, number> = {};
 
   playerCounts.forEach((counts) => {
@@ -151,6 +142,17 @@ const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
 
   return countsTotal;
 };
+
+  const theme = createTheme({
+    typography: {
+      fontSize: 16,
+
+      fontFamily: ["quicksand", "sans-serif"].join(","),
+    },
+  });
+  const primaryColor = "#0c1b28";
+const secondaryColor = "#ffbb54";
+
 
 
 // Define styled components
@@ -177,7 +179,7 @@ const Heading = styled(Typography)({
   color: "white",
 });
 
-
+const [totalCounts, setTotalCounts] = useState<Record<string, number>>({});
 
   return (
     <Box m={1} p={2}>
@@ -219,7 +221,19 @@ const Heading = styled(Typography)({
           Save Mail
         </Button>
 
-     
+      
+  <p>
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
+
+
+<p>
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
         
         <HashRouter>
           <Routes>
@@ -232,6 +246,8 @@ const Heading = styled(Typography)({
                   longestGameDuration={getLongestGameDuration(results)}
                   playerRollCounts={playerRollCounts}
                   playerBumpedCounts={playerBumpedCounts}
+                 
+                  
                 />
               }
             />
