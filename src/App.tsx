@@ -24,7 +24,19 @@ import localforage from "localforage";
 
 import { saveGameToCloud, loadGamesFromCloud } from "./tca-cloud-api";
 
+export const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
+  const countsTotal: Record<string, number> = {};
 
+  playerCounts.forEach((counts) => {
+    if (typeof counts === 'object' && counts !== null) {
+      Object.entries(counts).forEach(([player, count]) => {
+        countsTotal[player] = (countsTotal[player] || 0) + count;
+      });
+    }
+  });
+
+  return countsTotal;
+};
 
 export const App = () => {
   const [results, setGameResults] = useState<GameResult[]>([]);
@@ -129,19 +141,7 @@ export const App = () => {
     }
    };
 
-   const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => {
-  const countsTotal: Record<string, number> = {};
 
-  playerCounts.forEach((counts) => {
-    if (typeof counts === 'object' && counts !== null) {
-      Object.entries(counts).forEach(([player, count]) => {
-        countsTotal[player] = (countsTotal[player] || 0) + count;
-      });
-    }
-  });
-
-  return countsTotal;
-};
 
   const theme = createTheme({
     typography: {
@@ -222,18 +222,7 @@ const [totalCounts, setTotalCounts] = useState<Record<string, number>>({});
         </Button>
 
       
-  <p>
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
-
-
-<p>
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
+ 
         
         <HashRouter>
           <Routes>
@@ -246,7 +235,7 @@ const [totalCounts, setTotalCounts] = useState<Record<string, number>>({});
                   longestGameDuration={getLongestGameDuration(results)}
                   playerRollCounts={playerRollCounts}
                   playerBumpedCounts={playerBumpedCounts}
-                 
+                  results = {results}
                   
                 />
               }

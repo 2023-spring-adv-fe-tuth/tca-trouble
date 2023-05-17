@@ -5,7 +5,7 @@ import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import CardActions from "@mui/material/CardActions";
-import { LeaderboardPlayer } from "./front-end-model";
+import { GameResult, LeaderboardPlayer } from "./front-end-model";
 
 import { styled } from "@mui/material/styles";
 import Table from "@mui/material/Table";
@@ -21,13 +21,15 @@ import { durationFormatter } from "human-readable";
 import TextField from '@mui/material/TextField';
 import { useEffect, useState } from "react";
 
-import { App } from "./App";
+import { getPlayerCountsTotal } from "./App";
+
 interface HomeProps {
   leaderboardData: LeaderboardPlayer[];
   shortestGameDuration: number;
   longestGameDuration: number;
   playerRollCounts: { [playerName: string]: number };
   playerBumpedCounts: { [playerName: string]: number };
+  results: GameResult[];
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -72,7 +74,7 @@ export const Home: React.FC<HomeProps> = ({
   longestGameDuration,
   playerRollCounts,
   playerBumpedCounts,
-  
+  results,
 }) => {
   
 
@@ -80,6 +82,12 @@ export const Home: React.FC<HomeProps> = ({
 
   const format = durationFormatter();
 
+  const [countsTotal, setCountsTotal] = useState<Record<string, number>>({});
+
+  useEffect(() => {
+    const playerBumpedCountsTotal = getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts));
+    setCountsTotal(playerBumpedCountsTotal);
+  }, [results]);
   
 
   return (
@@ -106,10 +114,17 @@ export const Home: React.FC<HomeProps> = ({
     Play
   </Typography>
 </Button>
-<Typography variant="h4" component="div">
-  Total Counts
-</Typography>
-
+<p>Home page:
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
+<p>
+  home page:
+  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
+    .map(([player, count]) => `${player}: ${count}`)
+    .join(", ")}
+</p>
       <Card
         sx={{
           width: "100%",
