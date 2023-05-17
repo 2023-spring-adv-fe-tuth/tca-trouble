@@ -18,7 +18,7 @@ import {
   getLongestGameDuration,
 } from "./front-end-model";
 import { ThemeProvider } from "@emotion/react";
-import { Typography, createTheme, Button, TextField, styled } from "@mui/material";
+import { Typography, createTheme, Button, TextField, styled, CardContent, Card, Modal } from "@mui/material";
 
 import localforage from "localforage";
 
@@ -40,7 +40,28 @@ export const getPlayerCountsTotal = (playerCounts: Record<string, number>[]) => 
 
 export const App = () => {
   const [results, setGameResults] = useState<GameResult[]>([]);
+  const [modalOpen, setModalOpen] = useState(true);
+  const handleCloseModal = () => {
+    setModalOpen(false);
+  };
+  
 
+  const [emailError, setEmailError] = useState(false);
+
+  const validateEmail = (email: string) => {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return emailRegex.test(email);
+  };
+  
+  const handleSaveMail = () => {
+    if (validateEmail(emailKeyInput)) {
+      saveEmailKey();
+      handleCloseModal();
+    } else {
+      setEmailError(true);
+    }
+  };
+  
   const [setupInfo, setSetupInfo] = useState<SetupInfo>({
     start: "",
     chosenPlayers: [],
@@ -192,34 +213,92 @@ const [totalCounts, setTotalCounts] = useState<Record<string, number>>({});
       </AppContainer>
     </Box>
         
-        <TextField
-          id="input-with-sx"
-          label="Enter your mail"
-          variant="standard"
-          value={emailKeyInput}
-          onChange={(e) => setEmailKeyInput(e.target.value)}
-        />
+    
+    <Modal open={modalOpen} onClose={handleCloseModal}>
+    <Box
+  sx={{
+    position: 'absolute',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    width: '350px',
+    maxWidth: '100%',
+    outline: 'none',
+    borderRadius: '16px',
+    boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+    p: 1,
+    bgcolor: '#F9F9FB',
+    color: '#444444',
+  }}
+>
+  <Typography variant="h4" sx={{ textAlign: 'center', mb: 1 }}>
+    Enter Your Email
+  </Typography>
+  <Typography variant="h6" sx={{ textAlign: 'center', mb: 1 }}>
+    To load and save your game results
+  </Typography>
 
-        <Button
-          variant="contained"
-          onClick={saveEmailKey}
-          size="small"
-          
-          sx={{
-            borderRadius: 8,
-            py: 1.5,
-            px: 3,
-            fontWeight: "bold",
-            boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
-            color: "white",
-            backgroundColor: "primary.main",
-            "&:hover": {
-              backgroundColor: "primary.dark",
-            },
-          }}
-        >
-          Save Mail
-        </Button>
+  <TextField
+    id="input-with-sx"
+    label="Email"
+    variant="outlined"
+    value={emailKeyInput}
+    onChange={(e) => {
+      setEmailKeyInput(e.target.value);
+      setEmailError(false);
+    }}
+    fullWidth
+    error={emailError}
+    helperText={emailError && 'Please enter a valid email'}
+    sx={{ mb: 2 }}
+    InputProps={{
+      sx: {
+        color: '#444444',
+        '& .MuiOutlinedInput-notchedOutline': {
+          borderColor: '#999999',
+        },
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: '#999999',
+        },
+        '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
+          borderColor: '#999999',
+        },
+      },
+    }}
+    InputLabelProps={{
+      sx: {
+        color: '#444444',
+      },
+    }}
+  />
+
+  <Button
+    variant="contained"
+    onClick={handleSaveMail}
+    size="large"
+    fullWidth
+    disabled={!validateEmail(emailKeyInput)}
+    sx={{
+      borderRadius: '8px',
+      fontWeight: 'bold',
+      boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.2)',
+      bgcolor: '#FFC107',
+      color: '#FFFFFF',
+      '&:hover': {
+        bgcolor: '#FFA000',
+      },
+    }}
+  >
+    Save Mail
+  </Button>
+</Box>
+
+
+
+
+
+</Modal>
+
 
       
  

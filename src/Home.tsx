@@ -30,6 +30,7 @@ interface HomeProps {
   playerRollCounts: { [playerName: string]: number };
   playerBumpedCounts: { [playerName: string]: number };
   results: GameResult[];
+  
 }
 
 const StyledTableCell = styled(TableCell)(({ theme }) => ({
@@ -114,17 +115,7 @@ export const Home: React.FC<HomeProps> = ({
     Play
   </Typography>
 </Button>
-<p>Home page:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
-<p>
-  home page:
-  {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
-    .map(([player, count]) => `${player}: ${count}`)
-    .join(", ")}
-</p>
+
       <Card
         sx={{
           width: "100%",
@@ -213,83 +204,90 @@ export const Home: React.FC<HomeProps> = ({
           <Typography variant="h4" component="div">
             Who rolled 6 the most?
           </Typography>
-          {Object.keys(playerRollCounts).length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Name</StyledTableCell>
-                    <StyledTableCell align="left">
-                      Number of 6 rolled
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.keys(playerRollCounts)
-                    .sort((a, b) => playerRollCounts[b] - playerRollCounts[a])
-                    .map((x) => (
-                      <StyledTableRow key={x}>
-                        <StyledTableCell component="th" scope="row">
-                          {x}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">
-                          {playerRollCounts[x]}
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography variant="body1" component="div">
-              No stats available. Play a game to see your stats!
-            </Typography>
-          )}
+          
+          {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
+  .sort(([, count1], [, count2]) => count2 - count1)
+  .length > 0 ? ( // Check if there is data available
+    <TableContainer component={Paper}>
+      <Table aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Name</StyledTableCell>
+            <StyledTableCell align="left">Count</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerBumpedCounts)))
+            .sort(([, count1], [, count2]) => count2 - count1)
+            .map(([player, count]) => (
+              <StyledTableRow key={player}>
+                <StyledTableCell component="th" scope="row">
+                  {player}
+                </StyledTableCell>
+                <StyledTableCell align="left">{count}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  ) : (
+    <Typography variant="body1" component="div">
+      No stats available. Play a game to see your stats!
+    </Typography>
+  )}
+
+          
+         
+          
         </CardContent>
       </Card>
 
-      <Card
+<Card
         sx={{
           width: "100%",
-          
+          mt: 2,
+    mb: 2,
         }}
       >
         <CardContent>
           <Typography variant="h4" component="div">
             Who been bumped the most?
           </Typography>
-          {Object.keys(playerBumpedCounts).length > 0 ? (
-            <TableContainer component={Paper}>
-              <Table aria-label="customized table">
-                <TableHead>
-                  <TableRow>
-                    <StyledTableCell>Name</StyledTableCell>
-                    <StyledTableCell align="left">
-                      Number of times bumped
-                    </StyledTableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.keys(playerBumpedCounts)
-                    .sort((a, b) => playerBumpedCounts[b] - playerBumpedCounts[a])
-                    .map((x) => (
-                      <StyledTableRow key={x}>
-                        <StyledTableCell component="th" scope="row">
-                          {x}
-                        </StyledTableCell>
-                        <StyledTableCell align="left">
-                          {playerBumpedCounts[x]}
-                        </StyledTableCell>
-                      </StyledTableRow>
-                    ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          ) : (
-            <Typography variant="body1" component="div">
-              No stats available. Play a game to see your stats!
-            </Typography>
-          )}
+          
+          {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
+  .sort(([, count1], [, count2]) => count2 - count1)
+  .length > 0 ? ( // Check if there is data available
+    <TableContainer component={Paper}>
+      <Table aria-label="customized table">
+        <TableHead>
+          <TableRow>
+            <StyledTableCell>Name</StyledTableCell>
+            <StyledTableCell align="left">Count</StyledTableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {Object.entries(getPlayerCountsTotal(results.map((result) => result.playerRollCounts)))
+            .sort(([, count1], [, count2]) => count2 - count1)
+            .map(([player, count]) => (
+              <StyledTableRow key={player}>
+                <StyledTableCell component="th" scope="row">
+                  {player}
+                </StyledTableCell>
+                <StyledTableCell align="left">{count}</StyledTableCell>
+              </StyledTableRow>
+            ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
+  ) : (
+    <Typography variant="body1" component="div">
+      No stats available. Play a game to see your stats!
+    </Typography>
+  )}
+
+          
+         
+          
         </CardContent>
       </Card>
     </>

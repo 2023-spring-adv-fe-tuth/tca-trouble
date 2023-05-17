@@ -58,6 +58,7 @@ const GradientStartButton = styled(Button)({
 export interface SetupProps {
   previousPlayers: string[];
   setSetupInfo: (si: SetupInfo) => void;
+  
 }
 
 export const Setup: React.FC<SetupProps> = ({
@@ -128,7 +129,7 @@ export const Setup: React.FC<SetupProps> = ({
         setAvailableColors([...availableColors, player.color]);
       }
     }
-  };
+  }; 
 
   const validateAddNewPlayer = () => {
     if (
@@ -216,7 +217,7 @@ export const Setup: React.FC<SetupProps> = ({
           sx={{
             borderRadius: 8,
             py: 1.5,
-            px: 3,
+            px: 1.5,
             fontWeight: "bold",
             boxShadow: "0px 4px 8px rgba(0, 0, 0, 0.2)",
             color: "white",

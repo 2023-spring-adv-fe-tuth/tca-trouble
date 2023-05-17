@@ -38,6 +38,8 @@ interface PlayProps {
   }) => void;
 
   chosenPlayers: { name: string; color: string }[];
+
+  
 }
 
 export const Play: React.FC<PlayProps> = ({
