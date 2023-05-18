@@ -155,7 +155,17 @@ export const Setup: React.FC<SetupProps> = ({
   const disableAddButton = numSelected === maxPlayers;
   const disableStartButton = numSelected === 0 || numSelected > maxPlayers;
   const [dialogOpen, setDialogOpen] = React.useState(false);
+  const PlayerListTitle = styled(Typography)`
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 16px;
+`;
 
+const PlayerListDescription = styled(Typography)`
+  font-size: 18px;
+  margin-top: 8px;
+  color: #888;
+`;
   const [availableColors, setAvailableColors] = useState([
     "red",
     "blue",
@@ -187,18 +197,20 @@ export const Setup: React.FC<SetupProps> = ({
     setAvailableColors(availableColors.filter((c) => c !== color));
   };
 
+  const showSelectedPlayers = numSelected > 0;
+
   return (
     <>
-      <Typography variant="h6" sx={{ mb: 1 }}>
-        Setup
-      </Typography>
+      
 
       <Alert severity="info">
         <AlertTitle>
           <strong> Trouble </strong> can be played with maximum 4 players.
         </AlertTitle>
-      </Alert>
+        Select a player to choose their color. Feel free to add more players
 
+      </Alert>
+  
       <Box sx={{ display: "flex", alignItems: "flex-end", mt: 1 }}>
         <AccountCircle sx={{ color: "action.active", mr: 1 }} />
         <TextField
@@ -231,9 +243,12 @@ export const Setup: React.FC<SetupProps> = ({
         </Button>
       </Box>
 
+ 
       {chosenPlayers.map((x) => (
+        
         <FormGroup key={x.name}>
           <Box sx={{ display: "flex", alignItems: "flex-end", mt: 0.5 }}>
+            
             <FormControlLabel
               control={
                 <Checkbox
@@ -338,9 +353,11 @@ export const Setup: React.FC<SetupProps> = ({
         </FormGroup>
       ))}
       <Box sx={{ backgroundColor: "", mt: 1 }}>
-        <Typography variant="h4" sx={{ marginBottom: 2 }}>
-          Selected players:
-        </Typography>
+      {showSelectedPlayers && (
+  <Typography variant="h4" sx={{ marginBottom: 2 }}>
+    Selected players:
+  </Typography>
+)}
         {chosenPlayers
           .filter((x) => x.checked && x.color)
           .map((x) => (

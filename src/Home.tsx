@@ -181,7 +181,7 @@ export const Home: React.FC<HomeProps> = ({
         }}
       >
         <CardContent>
-          <Typography variant="h3">
+          <Typography variant="h4">
             Game Stats
           </Typography>
           <Typography variant="h6">
@@ -201,7 +201,7 @@ export const Home: React.FC<HomeProps> = ({
         }}
       >
         <CardContent>
-          <Typography variant="h4" component="div">
+          <Typography variant="h5" component="div">
             Who rolled 6 the most?
           </Typography>
           
@@ -250,7 +250,7 @@ export const Home: React.FC<HomeProps> = ({
         }}
       >
         <CardContent>
-          <Typography variant="h4" component="div">
+          <Typography variant="h5" component="div">
             Who been bumped the most?
           </Typography>
           

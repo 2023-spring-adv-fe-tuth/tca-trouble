@@ -8,7 +8,7 @@ import { Play } from "./Play";
 import { HashRouter, Routes, Route } from "react-router-dom";
 
 import Box from "@mui/material/Box";
-
+import { Stepper, Step, StepLabel } from "@mui/material";
 import {
   GameResult,
   calculateLeaderboard,
@@ -45,6 +45,8 @@ export const App = () => {
     setModalOpen(false);
   };
   
+  const steps = ["Home", "Setup", "Play"];
+  const [activeStep, setActiveStep] = useState(0);
 
   const [emailError, setEmailError] = useState(false);
 
